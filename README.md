@@ -1,2 +1,2 @@
-# rancher-kubectl-plugin
+# kubectl-rancherx
 A kubectl plugin for Rancher
