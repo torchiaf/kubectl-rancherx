@@ -2,6 +2,8 @@ package cli
 
 import (
 	"github.com/spf13/cobra"
+	"k8s.io/cli-runtime/pkg/genericclioptions"
+	"k8s.io/client-go/kubernetes"
 )
 
 func NewRootCmd() (*cobra.Command, error) {
@@ -12,8 +14,19 @@ func NewRootCmd() (*cobra.Command, error) {
 A very simple cli.`,
 	}
 
+	config, err := genericclioptions.NewConfigFlags(true).ToRESTConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	kubeClient, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return nil, err
+	}
+
 	rootCmd.AddCommand(
 		print(),
+		version(kubeClient),
 	)
 
 	return rootCmd, nil
