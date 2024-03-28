@@ -3,6 +3,7 @@ package cli
 import (
 	"github.com/spf13/cobra"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
+	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 )
 
@@ -24,9 +25,21 @@ A very simple cli.`,
 		return nil, err
 	}
 
+	dynamicClient, err := dynamic.NewForConfig(config)
+	if err != nil {
+		return nil, err
+	}
+
+	client := &Client{
+		kubeClient,
+		dynamicClient,
+	}
+
 	rootCmd.AddCommand(
-		print(),
 		version(kubeClient),
+		pods(kubeClient),        // dev only
+		projects(dynamicClient), // dev only
+		create(client),
 	)
 
 	return rootCmd, nil
