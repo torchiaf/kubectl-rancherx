@@ -3,6 +3,7 @@ package rancher
 import (
 	"context"
 
+	apiv3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -10,6 +11,8 @@ import (
 )
 
 func CreateProject(ctx context.Context, client *dynamic.DynamicClient, name string, displayName string, clusterName string) error {
+
+	_ = apiv3.Project{}
 	obj := &unstructured.Unstructured{
 		Object: map[string]interface{}{
 			"apiVersion": "management.cattle.io/v3",
