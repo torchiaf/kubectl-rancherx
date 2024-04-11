@@ -3,35 +3,32 @@ package rancher
 import (
 	"context"
 
+	apiv3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/rest"
 )
 
-func CreateProject(ctx context.Context, client *dynamic.DynamicClient, name string, displayName string, clusterName string) error {
-	obj := &unstructured.Unstructured{
-		Object: map[string]interface{}{
-			"apiVersion": "management.cattle.io/v3",
-			"kind":       "Project",
-			"metadata": map[string]interface{}{
-				"name": name,
-			},
-			"spec": map[string]interface{}{
-				"clusterName": clusterName,
-				"displayName": displayName,
-			},
+func CreateProject(ctx context.Context, client *rest.RESTClient, name string, displayName string, clusterName string) error {
+
+	obj := &apiv3.Project{
+		ObjectMeta: v1.ObjectMeta{
+			Name: name,
+		},
+		Spec: apiv3.ProjectSpec{
+			ClusterName: clusterName,
+			DisplayName: displayName,
 		},
 	}
 
-	_, err := client.Resource(schema.GroupVersionResource{
-		Group:    "management.cattle.io",
-		Version:  "v3",
-		Resource: "projects",
-	}).Namespace(clusterName).Create(ctx, obj, v1.CreateOptions{})
+	res := client.
+		Post().
+		Resource("projects").
+		Namespace(clusterName).
+		Body(obj).
+		Do(ctx)
 
-	if err != nil {
-		return err
+	if res.Error() != nil {
+		return res.Error()
 	}
 
 	return nil

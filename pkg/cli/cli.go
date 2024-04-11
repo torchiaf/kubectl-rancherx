@@ -1,7 +1,9 @@
 package cli
 
 import (
+	apiv3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
 	"github.com/spf13/cobra"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
@@ -14,6 +16,11 @@ func NewRootCmd() (*cobra.Command, error) {
 		Long: `
 A very simple cli.`,
 	}
+
+	rancherXScheme := runtime.NewScheme()
+
+	// scheme.AddToScheme(customScheme)
+	apiv3.AddToScheme(rancherXScheme)
 
 	config, err := genericclioptions.NewConfigFlags(true).ToRESTConfig()
 	if err != nil {
@@ -30,9 +37,15 @@ A very simple cli.`,
 		return nil, err
 	}
 
+	restClient, err := toRestClient(rancherXScheme, config)
+	if err != nil {
+		return nil, err
+	}
+
 	client := &Client{
 		kubeClient,
 		dynamicClient,
+		restClient,
 	}
 
 	rootCmd.AddCommand(

@@ -49,7 +49,7 @@
       "request": "launch",
       "mode": "auto",
       "program": "${fileDirname}",
-      "args": ["create", "project", "pippo-2", "--display-name", "pippo-2", "--cluster-name", "c-m-79djmg9n"]
+      "args": ["create", "project", "pippo-2", "--display-name", "pippo-2", "--cluster-name", "c-m-fzr7kw8k"]
     }
   ]
 }
