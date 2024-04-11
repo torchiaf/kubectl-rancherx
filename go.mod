@@ -8,6 +8,7 @@ replace k8s.io/client-go => github.com/rancher/client-go v1.27.4-rancher1
 
 require (
 	github.com/rancher/rancher/pkg/apis v0.0.0-20230317204402-a49d36c7e628
+	github.com/samber/lo v1.39.0
 	github.com/spf13/cobra v1.8.0
 	k8s.io/apimachinery v0.28.0-alpha.1
 	k8s.io/cli-runtime v0.27.9
@@ -61,7 +62,6 @@ require (
 	github.com/rancher/norman v0.0.0-20230831160711-5de27f66385d // indirect
 	github.com/rancher/rke v1.5.3 // indirect
 	github.com/rancher/wrangler v1.1.1 // indirect
-	github.com/samber/lo v1.39.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/xlab/treeprint v1.2.0 // indirect
