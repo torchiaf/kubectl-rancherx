@@ -61,10 +61,12 @@ require (
 	github.com/rancher/norman v0.0.0-20230831160711-5de27f66385d // indirect
 	github.com/rancher/rke v1.5.3 // indirect
 	github.com/rancher/wrangler v1.1.1 // indirect
+	github.com/samber/lo v1.39.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/xlab/treeprint v1.2.0 // indirect
 	go.starlark.net v0.0.0-20230525235612-a134d8f9ddca // indirect
+	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
 	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/oauth2 v0.16.0 // indirect
 	golang.org/x/sys v0.17.0 // indirect

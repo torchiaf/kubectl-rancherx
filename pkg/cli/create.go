@@ -9,10 +9,16 @@ import (
 	rancher "github.com/torchiaf/kubectl-rancherx/pkg/rancher"
 )
 
+var resources = []string{
+	"project", "projects",
+}
+
 func create(client *Client) *cobra.Command {
 	createCmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a Rancher resource from a file or from stdin.",
+		Args:  cobra.ExactArgs(1),
+		RunE:  ValidateSubCommand(resources),
 	}
 
 	createCmd.AddCommand(
@@ -31,7 +37,8 @@ func createProject(client *rest.RESTClient) *cobra.Command {
 	cfg := &createProjectConfig{}
 
 	cmd := &cobra.Command{
-		Use:     "project <name>",
+		Use:     "project",
+		Aliases: []string{"projects"},
 		Short:   "Create a project",
 		Example: `kubectl rancherx create project [--display-name] [--cluster-name] projectName`,
 		Args:    cobra.ExactArgs(1),
@@ -51,6 +58,8 @@ func createProject(client *rest.RESTClient) *cobra.Command {
 
 	cmd.Flags().StringVar(&cfg.DisplayName, "display-name", "", "DisplayName is the human-readable name for the project.")
 	cmd.Flags().StringVar(&cfg.ClusterName, "cluster-name", "", "ClusterName is the name of the cluster the project belongs to. Immutable.")
+	cmd.MarkFlagRequired("display-name")
+	cmd.MarkFlagRequired("cluster-name")
 
 	return cmd
 }
