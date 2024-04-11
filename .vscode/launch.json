@@ -9,14 +9,14 @@
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${fileDirname}",
+      "program": "main.go",
     },
     {
       "name": "Command: Print",
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${fileDirname}",
+      "program": "main.go",
       "args": ["print"]
     },
     {
@@ -24,7 +24,7 @@
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${fileDirname}",
+      "program": "main.go",
       "args": ["version"]
     },
     {
@@ -32,7 +32,7 @@
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${fileDirname}",
+      "program": "main.go",
       "args": ["pods"]
     },
     {
@@ -40,7 +40,7 @@
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${fileDirname}",
+      "program": "main.go",
       "args": ["projects"]
     },
     {
@@ -48,8 +48,16 @@
       "type": "go",
       "request": "launch",
       "mode": "auto",
-      "program": "${fileDirname}",
+      "program": "main.go",
       "args": ["create", "project", "pippo-2", "--display-name", "pippo-2", "--cluster-name", "c-m-fzr7kw8k"]
+    },
+    {
+      "name": "Generate error",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "main.go",
+      "args": ["create", "dwa"]
     }
   ]
 }

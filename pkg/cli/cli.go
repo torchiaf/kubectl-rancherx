@@ -15,6 +15,7 @@ func NewRootCmd() (*cobra.Command, error) {
 		Short: "kubectl-rancherx helps to create k8s objects in a Rancher cluster",
 		Long: `
 A very simple cli.`,
+		SilenceUsage: true,
 	}
 
 	rancherXScheme := runtime.NewScheme()
