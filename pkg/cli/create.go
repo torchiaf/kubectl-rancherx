@@ -1,8 +1,10 @@
 package cli
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
-	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/rest"
 
 	rancher "github.com/torchiaf/kubectl-rancherx/pkg/rancher"
 )
@@ -14,7 +16,7 @@ func create(client *Client) *cobra.Command {
 	}
 
 	createCmd.AddCommand(
-		createProject(client.DynamicClient),
+		createProject(client.RestClient),
 	)
 
 	return createCmd
@@ -25,7 +27,7 @@ type createProjectConfig struct {
 	ClusterName string
 }
 
-func createProject(dynamic *dynamic.DynamicClient) *cobra.Command {
+func createProject(client *rest.RESTClient) *cobra.Command {
 	cfg := &createProjectConfig{}
 
 	cmd := &cobra.Command{
@@ -37,7 +39,11 @@ func createProject(dynamic *dynamic.DynamicClient) *cobra.Command {
 
 			projectName := args[0]
 
-			rancher.CreateProject(c.Context(), dynamic, projectName, cfg.DisplayName, cfg.ClusterName)
+			err := rancher.CreateProject(c.Context(), client, projectName, cfg.DisplayName, cfg.ClusterName)
+
+			if err != nil {
+				return fmt.Errorf("creating project: %w", err)
+			}
 
 			return nil
 		},

@@ -38,6 +38,7 @@ func version(kubeClient kubernetes.Interface) *cobra.Command {
 }
 
 func pods(kubeClient kubernetes.Interface) *cobra.Command {
+
 	return &cobra.Command{
 		Use:   "pods",
 		Short: "Print pods",
