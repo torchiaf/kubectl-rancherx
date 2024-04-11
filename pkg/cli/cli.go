@@ -51,8 +51,8 @@ A very simple cli.`,
 
 	rootCmd.AddCommand(
 		version(kubeClient),
-		pods(kubeClient),        // dev only
-		projects(dynamicClient), // dev only
+		pods(kubeClient),        // dev only, TODO remove
+		projects(dynamicClient), // dev only, TODO remove
 		create(client),
 	)
 

@@ -37,11 +37,13 @@ func createProject(client *rest.RESTClient) *cobra.Command {
 	cfg := &createProjectConfig{}
 
 	cmd := &cobra.Command{
-		Use:     "project",
-		Aliases: []string{"projects"},
-		Short:   "Create a project",
-		Example: `kubectl rancherx create project [--display-name] [--cluster-name] projectName`,
-		Args:    cobra.ExactArgs(1),
+		Use:               "project",
+		Aliases:           []string{"projects"},
+		Short:             "Create a project",
+		Example:           `kubectl rancherx create project [--display-name] [--cluster-name] projectName`,
+		Args:              cobra.ExactArgs(1),
+		ValidArgs:         resources,
+		ValidArgsFunction: NoFileCompletions,
 		RunE: func(c *cobra.Command, args []string) error {
 
 			projectName := args[0]
@@ -60,6 +62,7 @@ func createProject(client *rest.RESTClient) *cobra.Command {
 	cmd.Flags().StringVar(&cfg.ClusterName, "cluster-name", "", "ClusterName is the name of the cluster the project belongs to. Immutable.")
 	cmd.MarkFlagRequired("display-name")
 	cmd.MarkFlagRequired("cluster-name")
+	cmd.RegisterFlagCompletionFunc("cluster-name", ClustersFlagValidator(client))
 
 	return cmd
 }

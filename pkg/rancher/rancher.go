@@ -15,6 +15,10 @@ func CreateProject(ctx context.Context, client *rest.RESTClient, name string, di
 		ObjectMeta: v1.ObjectMeta{
 			Name: name,
 		},
+		// TODO generate name -> hide the namespace on the UI
+		// ObjectMeta: v1.ObjectMeta{
+		// 	GenerateName: "p-",
+		// },
 		Spec: apiv3.ProjectSpec{
 			ClusterName: clusterName,
 			DisplayName: displayName,
@@ -23,14 +27,3 @@ func CreateProject(ctx context.Context, client *rest.RESTClient, name string, di
 
 	return manager.Create(ctx, client, "projects", clusterName, obj)
 }
-
-// func GetClusters(ctx context.Context, client *rest.RESTClient) (*apiv3.ClusterList, error) {
-// 	obj := &apiv3.ClusterList{}
-
-// 	err := restManager.Get(ctx, client, "clusters", "", obj)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	return obj, nil
-// }
