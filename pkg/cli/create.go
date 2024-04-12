@@ -15,10 +15,11 @@ var resources = []string{
 
 func create(client *Client) *cobra.Command {
 	createCmd := &cobra.Command{
-		Use:   "create",
-		Short: "Create a Rancher resource from a file or from stdin.",
-		Args:  cobra.ExactArgs(1),
-		RunE:  ValidateSubCommand(resources),
+		Use:           "create",
+		Short:         "Create a Rancher resource from a file or from stdin.",
+		Args:          cobra.ExactArgs(1),
+		RunE:          ValidateSubCommand(resources),
+		SilenceErrors: true,
 	}
 
 	createCmd.AddCommand(
