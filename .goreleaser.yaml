@@ -38,6 +38,21 @@ archives:
       - goos: windows
         format: zip
 
+brews:
+  - name: rancherx
+    description: "A kubectl plugin for Rancher"
+    homepage: "https://torchiaf.github.io/kubectl-rancherx"
+    license: "GNU General Public License"
+
+    repository:
+      owner: torchiaf
+      name: homebrew-tap
+      branch: main
+      token: "{{ .Env.TAP_GITHUB_TOKEN }}"
+
+    folder: Formula
+    url_template: "https://github.com/torchiaf/kubectl-rancherx/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+
 changelog:
   sort: asc
   filters:
