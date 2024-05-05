@@ -12,14 +12,6 @@
       "program": "main.go",
     },
     {
-      "name": "Command: Print",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "main.go",
-      "args": ["print"]
-    },
-    {
       "name": "Command: Version",
       "type": "go",
       "request": "launch",
@@ -36,20 +28,36 @@
       "args": ["pods"]
     },
     {
-      "name": "Command: Projects",
-      "type": "go",
-      "request": "launch",
-      "mode": "auto",
-      "program": "main.go",
-      "args": ["projects"]
-    },
-    {
       "name": "Command: Create Project",
       "type": "go",
       "request": "launch",
       "mode": "auto",
       "program": "main.go",
-      "args": ["create", "project", "pippo-2", "--display-name", "pippo-2", "--cluster-name", "c-m-fzr7kw8k"]
+      "args": ["create", "project", "pippo", "--display-name", "pippo", "--cluster-name", "local"]
+    },
+    {
+      "name": "Command: Delete Project",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "main.go",
+      "args": ["delete", "project", "pippo", "--cluster-name", "local"]
+    },
+    {
+      "name": "Command: Get Projects",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "main.go",
+      "args": ["get", "project", "--cluster-name", "local"]
+    },
+    {
+      "name": "Command: Get Project",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "main.go",
+      "args": ["get", "project", "p-xs2md", "--cluster-name", "local"]
     },
     {
       "name": "Generate error",
@@ -57,7 +65,7 @@
       "request": "launch",
       "mode": "auto",
       "program": "main.go",
-      "args": ["create", "dwa"]
+      "args": ["create", "foo"]
     }
   ]
 }

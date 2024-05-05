@@ -52,8 +52,9 @@ A very simple cli.`,
 	rootCmd.AddCommand(
 		version(kubeClient),
 		pods(kubeClient),
-		projects(dynamicClient),
+		get(client),
 		create(client),
+		delete(client),
 	)
 
 	return rootCmd, nil

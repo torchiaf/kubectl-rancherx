@@ -7,6 +7,47 @@ import (
 	"k8s.io/client-go/rest"
 )
 
+func List[T runtime.Object](ctx context.Context, client *rest.RESTClient, resource string, namespace string, obj T) error {
+	req := client.
+		Get().
+		Resource(resource)
+
+	if namespace != "" {
+		req = req.Namespace(namespace)
+	}
+
+	err := req.
+		Do(ctx).
+		Into(obj)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func Get[T runtime.Object](ctx context.Context, client *rest.RESTClient, resource string, namespace string, name string, obj T) error {
+	req := client.
+		Get().
+		Resource(resource)
+
+	if namespace != "" {
+		req = req.Namespace(namespace)
+	}
+
+	err := req.
+		Name(name).
+		Do(ctx).
+		Into(obj)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func Create(ctx context.Context, client *rest.RESTClient, resource string, namespace string, obj interface{}) error {
 	res := client.
 		Post().
@@ -22,21 +63,16 @@ func Create(ctx context.Context, client *rest.RESTClient, resource string, names
 	return nil
 }
 
-func Get[T runtime.Object](ctx context.Context, client *rest.RESTClient, resource string, namespace string, obj T) error {
-	req := client.
-		Get().
-		Resource(resource)
+func Delete(ctx context.Context, client *rest.RESTClient, resource string, namespace string, name string) error {
+	res := client.
+		Delete().
+		Resource(resource).
+		Namespace(namespace).
+		Name(name).
+		Do(ctx)
 
-	if namespace != "" {
-		req = req.Namespace(namespace)
-	}
-
-	err := req.
-		Do(ctx).
-		Into(obj)
-
-	if err != nil {
-		return err
+	if res.Error() != nil {
+		return res.Error()
 	}
 
 	return nil
