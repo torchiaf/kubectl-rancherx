@@ -29,8 +29,9 @@ func version(kubeClient kubernetes.Interface) *cobra.Command {
 
 func pods(kubeClient kubernetes.Interface) *cobra.Command {
 	return &cobra.Command{
-		Use:   "pods",
-		Short: "Print pods",
+		Hidden: true,
+		Use:    "pods",
+		Short:  "Print pods",
 		RunE: func(c *cobra.Command, args []string) error {
 			pods, err := kubeClient.CoreV1().Pods("default").List(c.Context(), v1.ListOptions{})
 			if err != nil {
@@ -49,8 +50,9 @@ func pods(kubeClient kubernetes.Interface) *cobra.Command {
 
 func projects(kubeClient *dynamic.DynamicClient) *cobra.Command {
 	return &cobra.Command{
-		Use:   "projects",
-		Short: "Print projects",
+		Hidden: true,
+		Use:    "projects",
+		Short:  "Print projects",
 		RunE: func(c *cobra.Command, args []string) error {
 
 			projects, err := kubeClient.Resource(schema.GroupVersionResource{
@@ -68,7 +70,6 @@ func projects(kubeClient *dynamic.DynamicClient) *cobra.Command {
 			}
 
 			return nil
-
 		},
 	}
 }
