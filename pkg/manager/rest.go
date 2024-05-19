@@ -67,9 +67,5 @@ func Delete(ctx context.Context, client *rest.RESTClient, resource string, names
 		Name(name).
 		Do(ctx)
 
-	if res.Error() != nil {
-		return res.Error()
-	}
-
-	return nil
+	return res.Error()
 }
