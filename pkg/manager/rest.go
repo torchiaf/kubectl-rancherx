@@ -56,11 +56,7 @@ func Create(ctx context.Context, client *rest.RESTClient, resource string, names
 		Body(obj).
 		Do(ctx)
 
-	if res.Error() != nil {
-		return res.Error()
-	}
-
-	return nil
+	return res.Error()
 }
 
 func Delete(ctx context.Context, client *rest.RESTClient, resource string, namespace string, name string) error {
