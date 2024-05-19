@@ -9,7 +9,7 @@ import (
 	rancher "github.com/torchiaf/kubectl-rancherx/pkg/rancher"
 )
 
-func get(client *Client) *cobra.Command {
+func newGetCmd(client *Client) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "get",
 		Short:         "Display one or many Rancher resources.",
@@ -19,13 +19,13 @@ func get(client *Client) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		getProjects(client.RestClient),
+		newGetProjectsCmd(client.RestClient),
 	)
 
 	return cmd
 }
 
-func getProjects(client *rest.RESTClient) *cobra.Command {
+func newGetProjectsCmd(client *rest.RESTClient) *cobra.Command {
 	cfg := &ProjectConfig{}
 
 	cmd := &cobra.Command{

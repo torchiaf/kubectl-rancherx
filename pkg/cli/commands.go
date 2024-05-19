@@ -8,7 +8,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-func version(kubeClient kubernetes.Interface) *cobra.Command {
+func newVersionCmd(kubeClient kubernetes.Interface) *cobra.Command {
 	return &cobra.Command{
 		Use:   "version",
 		Short: "Print the Kubernetes version",
@@ -25,7 +25,7 @@ func version(kubeClient kubernetes.Interface) *cobra.Command {
 	}
 }
 
-func pods(kubeClient kubernetes.Interface) *cobra.Command {
+func newPodsCmd(kubeClient kubernetes.Interface) *cobra.Command {
 	return &cobra.Command{
 		Hidden: true,
 		Use:    "pods",

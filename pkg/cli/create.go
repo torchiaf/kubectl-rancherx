@@ -9,7 +9,7 @@ import (
 	rancher "github.com/torchiaf/kubectl-rancherx/pkg/rancher"
 )
 
-func create(client *Client) *cobra.Command {
+func newCreateCmd(client *Client) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "create",
 		Short:         "Create a Rancher resource from a file or from stdin.",
@@ -19,13 +19,13 @@ func create(client *Client) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		createProject(client.RestClient),
+		newCreateProjectCmd(client.RestClient),
 	)
 
 	return cmd
 }
 
-func createProject(client *rest.RESTClient) *cobra.Command {
+func newCreateProjectCmd(client *rest.RESTClient) *cobra.Command {
 	cfg := &ProjectConfig{}
 
 	cmd := &cobra.Command{

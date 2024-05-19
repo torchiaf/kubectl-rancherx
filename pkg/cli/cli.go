@@ -50,11 +50,11 @@ A very simple cli.`,
 	}
 
 	rootCmd.AddCommand(
-		version(kubeClient),
-		pods(kubeClient),
-		get(client),
-		create(client),
-		delete(client),
+		newVersionCmd(kubeClient),
+		newPodsCmd(kubeClient),
+		newGetCmd(client),
+		newCreateCmd(client),
+		newDeleteCmd(client),
 	)
 
 	return rootCmd, nil

@@ -9,7 +9,7 @@ import (
 	rancher "github.com/torchiaf/kubectl-rancherx/pkg/rancher"
 )
 
-func delete(client *Client) *cobra.Command {
+func newDeleteCmd(client *Client) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:           "delete",
 		Short:         "Delete Rancher resources by resources and names.",
@@ -19,13 +19,13 @@ func delete(client *Client) *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		deleteProject(client.RestClient),
+		newDeleteProjectCmd(client.RestClient),
 	)
 
 	return cmd
 }
 
-func deleteProject(client *rest.RESTClient) *cobra.Command {
+func newDeleteProjectCmd(client *rest.RESTClient) *cobra.Command {
 	cfg := &ProjectConfig{}
 
 	cmd := &cobra.Command{
