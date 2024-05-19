@@ -34,25 +34,28 @@ func newGetProjectsCmd(client *rest.RESTClient) *cobra.Command {
 		Short:   "Get projects",
 		Example: `kubectl rancherx get project [--cluster-name] [projectName]`,
 		RunE: func(c *cobra.Command, args []string) error {
+
+			projects, err := rancher.ListProjects(c.Context(), client, cfg.ClusterName)
+			if err != nil {
+				return fmt.Errorf("getting projects: %w", err)
+			}
+
+			if len(projects.Items) == 0 {
+				fmt.Printf("No resources found in %q cluster.\n", cfg.ClusterName)
+			}
+
 			if len(args) > 0 {
-				project, err := rancher.GetProject(c.Context(), client, args[0], cfg.ClusterName)
-				if err != nil {
-					return fmt.Errorf("getting projects: %w", err)
+				projectMap := make(map[string]string)
+				for i := 0; i < len(projects.Items); i++ {
+					projectMap[projects.Items[i].Spec.DisplayName] = fmt.Sprintf("%s  %s", projects.Items[i].Name, projects.Items[i].Spec.DisplayName)
 				}
 
-				fmt.Printf("%s\n", project.Spec.DisplayName)
+				for _, arg := range args {
+					fmt.Printf("%s\n", projectMap[arg])
+				}
 			} else {
-				projects, err := rancher.ListProjects(c.Context(), client, cfg.ClusterName)
-				if err != nil {
-					return fmt.Errorf("getting projects: %w", err)
-				}
-
-				if len(projects.Items) == 0 {
-					fmt.Printf("No resources found in %q cluster.\n", cfg.ClusterName)
-				}
-
 				for _, project := range projects.Items {
-					fmt.Printf("%s\n", project.Spec.DisplayName)
+					fmt.Printf("%s\n", fmt.Sprintf("%s  %s", project.Name, project.Spec.DisplayName))
 				}
 			}
 
