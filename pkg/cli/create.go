@@ -9,12 +9,8 @@ import (
 	rancher "github.com/torchiaf/kubectl-rancherx/pkg/rancher"
 )
 
-var resources = []string{
-	"project", "projects",
-}
-
-func create(client *Client) *cobra.Command {
-	createCmd := &cobra.Command{
+func newCreateCmd(client *Client) *cobra.Command {
+	cmd := &cobra.Command{
 		Use:           "create",
 		Short:         "Create a Rancher resource from a file or from stdin.",
 		Args:          cobra.ExactArgs(1),
@@ -22,20 +18,15 @@ func create(client *Client) *cobra.Command {
 		SilenceErrors: true,
 	}
 
-	createCmd.AddCommand(
-		createProject(client.RestClient),
+	cmd.AddCommand(
+		newCreateProjectCmd(client.RestClient),
 	)
 
-	return createCmd
+	return cmd
 }
 
-type createProjectConfig struct {
-	DisplayName string
-	ClusterName string
-}
-
-func createProject(client *rest.RESTClient) *cobra.Command {
-	cfg := &createProjectConfig{}
+func newCreateProjectCmd(client *rest.RESTClient) *cobra.Command {
+	cfg := &ProjectConfig{}
 
 	cmd := &cobra.Command{
 		Use:               "project",
@@ -43,7 +34,6 @@ func createProject(client *rest.RESTClient) *cobra.Command {
 		Short:             "Create a project",
 		Example:           `kubectl rancherx create project [--display-name] [--cluster-name] projectName`,
 		Args:              cobra.ExactArgs(1),
-		ValidArgs:         resources,
 		ValidArgsFunction: NoFileCompletions,
 		RunE: func(c *cobra.Command, args []string) error {
 
@@ -55,8 +45,11 @@ func createProject(client *rest.RESTClient) *cobra.Command {
 				return fmt.Errorf("creating project: %w", err)
 			}
 
+			fmt.Printf("Project: %q created \n", projectName)
+
 			return nil
 		},
+		SilenceErrors: true,
 	}
 
 	cmd.Flags().StringVar(&cfg.DisplayName, "display-name", "", "DisplayName is the human-readable name for the project.")
