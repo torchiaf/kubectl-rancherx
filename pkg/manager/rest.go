@@ -3,6 +3,7 @@ package manager
 import (
 	"context"
 
+	log "github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
 )
@@ -21,8 +22,11 @@ func List[T runtime.Object](ctx context.Context, client *rest.RESTClient, resour
 		Into(obj)
 
 	if err != nil {
+		log.Tracef("manager.List -  resource [%s] - namespace [%s] - error [%s]", resource, namespace, err)
 		return err
 	}
+
+	log.Tracef("manager.List - resource [%s] - namespace [%s] - obj [%+v]", resource, namespace, obj)
 
 	return nil
 }
@@ -42,9 +46,11 @@ func Get[T runtime.Object](ctx context.Context, client *rest.RESTClient, resourc
 		Into(obj)
 
 	if err != nil {
+		log.Tracef("manager.Get - resource [%s] - namespace [%s] - name [%s] - error [%s]", resource, namespace, name, err)
 		return err
 	}
 
+	log.Tracef("manager.Get - resource [%s] - namespace [%s] - name [%s] - obj [%+v]", resource, namespace, name, obj)
 	return nil
 }
 
@@ -56,7 +62,14 @@ func Create(ctx context.Context, client *rest.RESTClient, resource string, names
 		Body(obj).
 		Do(ctx)
 
-	return res.Error()
+	err := res.Error()
+	if err != nil {
+		log.Tracef("manager.Create - resource [%s] - namespace [%s] - error [%s]", resource, namespace, err)
+	}
+
+	log.Tracef("manager.Create - resource [%s] - namespace [%s] - obj [%+v]", resource, namespace, obj)
+
+	return err
 }
 
 func Delete(ctx context.Context, client *rest.RESTClient, resource string, namespace string, name string) error {
@@ -67,5 +80,12 @@ func Delete(ctx context.Context, client *rest.RESTClient, resource string, names
 		Name(name).
 		Do(ctx)
 
-	return res.Error()
+	err := res.Error()
+	if err != nil {
+		log.Tracef("manager.Delete - resource [%s] - namespace [%s] - name [%s] - error [%s]", resource, namespace, name, err)
+	}
+
+	log.Tracef("manager.Delete - resource [%s] - namespace [%s] - name [%s]", resource, namespace, name)
+
+	return err
 }
