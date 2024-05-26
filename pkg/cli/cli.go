@@ -16,6 +16,12 @@ func NewRootCmd() (*cobra.Command, error) {
 		Long: `
 A very simple cli.`,
 		SilenceUsage: true,
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			if err := toggleDebug(); err != nil {
+				return err
+			}
+			return nil
+		},
 	}
 
 	rancherXScheme := runtime.NewScheme()
@@ -56,6 +62,8 @@ A very simple cli.`,
 		newCreateCmd(client),
 		newDeleteCmd(client),
 	)
+
+	rootCmd.PersistentFlags().Uint32VarP(&logLevel, "verbosity", "v", 0, "logging level of verbosity")
 
 	return rootCmd, nil
 }
