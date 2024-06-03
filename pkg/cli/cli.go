@@ -64,6 +64,7 @@ A very simple cli.`,
 	)
 
 	rootCmd.PersistentFlags().Uint32VarP(&logLevel, "verbosity", "v", 0, "logging level of verbosity")
+	rootCmd.PersistentFlags().StringVarP(&logFileName, "print", "p", "", "print logs to file")
 
 	return rootCmd, nil
 }
