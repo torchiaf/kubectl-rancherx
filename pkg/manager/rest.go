@@ -2,6 +2,7 @@ package manager
 
 import (
 	"context"
+	"log/slog"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
@@ -23,11 +24,11 @@ func List[T runtime.Object](ctx context.Context, client *rest.RESTClient, resour
 		Into(obj)
 
 	if err != nil {
-		log.Debug(resource, namespace, err)
+		log.Trace(resource, namespace, err)
 		return err
 	}
 
-	log.Debug(resource, namespace, obj)
+	log.Trace("manager.List", slog.String("resource", resource), slog.String("namespace", namespace), "obj", obj)
 
 	return nil
 }
@@ -47,11 +48,11 @@ func Get[T runtime.Object](ctx context.Context, client *rest.RESTClient, resourc
 		Into(obj)
 
 	if err != nil {
-		log.Debug(resource, namespace, name, err)
+		log.Trace(resource, namespace, name, err)
 		return err
 	}
 
-	log.Debug(resource, namespace, name, obj)
+	log.Trace(resource, namespace, name, obj)
 	return nil
 }
 
@@ -65,10 +66,10 @@ func Create(ctx context.Context, client *rest.RESTClient, resource string, names
 
 	err := res.Error()
 	if err != nil {
-		log.Debug(resource, namespace, err)
+		log.Trace(resource, namespace, err)
 	}
 
-	log.Debug(resource, namespace, obj)
+	log.Trace(resource, namespace, obj)
 
 	return err
 }
@@ -83,10 +84,10 @@ func Delete(ctx context.Context, client *rest.RESTClient, resource string, names
 
 	err := res.Error()
 	if err != nil {
-		log.Debug(resource, namespace, name, err)
+		log.Trace(resource, namespace, name, err)
 	}
 
-	log.Debug(resource, namespace, name)
+	log.Trace(resource, namespace, name)
 
 	return err
 }
