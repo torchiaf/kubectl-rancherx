@@ -7,6 +7,8 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
+
+	log "github.com/torchiaf/kubectl-rancherx/pkg/log"
 )
 
 func NewRootCmd() (*cobra.Command, error) {
@@ -17,7 +19,7 @@ func NewRootCmd() (*cobra.Command, error) {
 A very simple cli.`,
 		SilenceUsage: true,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			if err := toggleDebug(); err != nil {
+			if err := log.InitLogger(); err != nil {
 				return err
 			}
 			return nil
@@ -63,8 +65,8 @@ A very simple cli.`,
 		newDeleteCmd(client),
 	)
 
-	rootCmd.PersistentFlags().Uint32VarP(&logLevel, "verbosity", "v", 0, "logging level of verbosity")
-	rootCmd.PersistentFlags().StringVarP(&logFileName, "print", "p", "", "print logs to file")
+	rootCmd.PersistentFlags().IntVarP(&log.LogLevel, "verbosity", "v", 0, "level of log verbosity")
+	rootCmd.PersistentFlags().StringVarP(&log.LogFileName, "print", "p", "", "print logs to file")
 
 	return rootCmd, nil
 }

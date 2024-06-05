@@ -3,9 +3,10 @@ package manager
 import (
 	"context"
 
-	log "github.com/sirupsen/logrus"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
+
+	"github.com/torchiaf/kubectl-rancherx/pkg/log"
 )
 
 func List[T runtime.Object](ctx context.Context, client *rest.RESTClient, resource string, namespace string, obj T) error {
@@ -22,11 +23,11 @@ func List[T runtime.Object](ctx context.Context, client *rest.RESTClient, resour
 		Into(obj)
 
 	if err != nil {
-		log.Tracef("manager.List -  resource [%s] - namespace [%s] - error [%s]", resource, namespace, err)
+		log.Debug(resource, namespace, err)
 		return err
 	}
 
-	log.Tracef("manager.List - resource [%s] - namespace [%s] - obj [%+v]", resource, namespace, obj)
+	log.Debug(resource, namespace, obj)
 
 	return nil
 }
@@ -46,11 +47,11 @@ func Get[T runtime.Object](ctx context.Context, client *rest.RESTClient, resourc
 		Into(obj)
 
 	if err != nil {
-		log.Tracef("manager.Get - resource [%s] - namespace [%s] - name [%s] - error [%s]", resource, namespace, name, err)
+		log.Debug(resource, namespace, name, err)
 		return err
 	}
 
-	log.Tracef("manager.Get - resource [%s] - namespace [%s] - name [%s] - obj [%+v]", resource, namespace, name, obj)
+	log.Debug(resource, namespace, name, obj)
 	return nil
 }
 
@@ -64,10 +65,10 @@ func Create(ctx context.Context, client *rest.RESTClient, resource string, names
 
 	err := res.Error()
 	if err != nil {
-		log.Tracef("manager.Create - resource [%s] - namespace [%s] - error [%s]", resource, namespace, err)
+		log.Debug(resource, namespace, err)
 	}
 
-	log.Tracef("manager.Create - resource [%s] - namespace [%s] - obj [%+v]", resource, namespace, obj)
+	log.Debug(resource, namespace, obj)
 
 	return err
 }
@@ -82,10 +83,10 @@ func Delete(ctx context.Context, client *rest.RESTClient, resource string, names
 
 	err := res.Error()
 	if err != nil {
-		log.Tracef("manager.Delete - resource [%s] - namespace [%s] - name [%s] - error [%s]", resource, namespace, name, err)
+		log.Debug(resource, namespace, name, err)
 	}
 
-	log.Tracef("manager.Delete - resource [%s] - namespace [%s] - name [%s]", resource, namespace, name)
+	log.Debug(resource, namespace, name)
 
 	return err
 }
