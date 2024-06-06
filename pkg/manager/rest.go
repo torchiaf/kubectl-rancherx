@@ -24,11 +24,24 @@ func List[T runtime.Object](ctx context.Context, client *rest.RESTClient, resour
 		Into(obj)
 
 	if err != nil {
-		log.Trace(resource, namespace, err)
+		log.Trace("manager.List",
+			slog.Group("args",
+				"resource", resource,
+				"namespace", namespace,
+				"err", err,
+			),
+		)
+
 		return err
 	}
 
-	log.Trace("manager.List", slog.String("resource", resource), slog.String("namespace", namespace), "obj", obj)
+	log.Trace("manager.List",
+		slog.Group("args",
+			"resource", resource,
+			"namespace", namespace,
+			"obj", obj,
+		),
+	)
 
 	return nil
 }
@@ -48,11 +61,26 @@ func Get[T runtime.Object](ctx context.Context, client *rest.RESTClient, resourc
 		Into(obj)
 
 	if err != nil {
-		log.Trace(resource, namespace, name, err)
+		log.Trace("manager.Get",
+			slog.Group("args",
+				"resource", resource,
+				"namespace", namespace,
+				"name", name,
+				"err", err,
+			),
+		)
 		return err
 	}
 
-	log.Trace(resource, namespace, name, obj)
+	log.Trace("manager.Get",
+		slog.Group("args",
+			"resource", resource,
+			"namespace", namespace,
+			"name", name,
+			"obj", obj,
+		),
+	)
+
 	return nil
 }
 
@@ -66,12 +94,26 @@ func Create(ctx context.Context, client *rest.RESTClient, resource string, names
 
 	err := res.Error()
 	if err != nil {
-		log.Trace(resource, namespace, err)
+		log.Trace("manager.Create",
+			slog.Group("args",
+				"resource", resource,
+				"namespace", namespace,
+				"err", err,
+			),
+		)
+
+		return err
 	}
 
-	log.Trace(resource, namespace, obj)
+	log.Trace("manager.Create",
+		slog.Group("args",
+			"resource", resource,
+			"namespace", namespace,
+			"obj", obj,
+		),
+	)
 
-	return err
+	return nil
 }
 
 func Delete(ctx context.Context, client *rest.RESTClient, resource string, namespace string, name string) error {
@@ -84,10 +126,25 @@ func Delete(ctx context.Context, client *rest.RESTClient, resource string, names
 
 	err := res.Error()
 	if err != nil {
-		log.Trace(resource, namespace, name, err)
+		log.Trace("manager.Delete",
+			slog.Group("args",
+				"resource", resource,
+				"namespace", namespace,
+				"name", name,
+				"err", err,
+			),
+		)
+
+		return err
 	}
 
-	log.Trace(resource, namespace, name)
+	log.Trace("manager.Delete",
+		slog.Group("args",
+			"resource", resource,
+			"namespace", namespace,
+			"name", name,
+		),
+	)
 
-	return err
+	return nil
 }
