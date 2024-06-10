@@ -11,8 +11,6 @@ import (
 	"github.com/lmittmann/tint"
 )
 
-var ctx context.Context
-
 const (
 	levelTrace = slog.Level(-8)
 	levelDebug = slog.Level(-4)
@@ -95,11 +93,12 @@ type LogConfig struct {
 	LogFileName string
 }
 
+var ctx context.Context
 var logger *slog.Logger
 
-func InitLogger(cfg *LogConfig) error {
+func InitLogger(context context.Context, cfg *LogConfig) error {
 
-	ctx = context.Background()
+	ctx = context
 
 	var ioWriter io.Writer = os.Stdout
 
@@ -149,19 +148,19 @@ func Trace(msg string, args ...any) {
 }
 
 func Debug(msg string, args ...any) {
-	logger.Debug(msg, args...)
+	logger.DebugContext(ctx, msg, args...)
 }
 
 func Info(msg string, args ...any) {
-	logger.Info(msg, args...)
+	logger.InfoContext(ctx, msg, args...)
 }
 
 func Warn(msg string, args ...any) {
-	logger.Warn(msg, args...)
+	logger.WarnContext(ctx, msg, args...)
 }
 
 func Error(msg string, args ...any) {
-	logger.Error(msg, args...)
+	logger.ErrorContext(ctx, msg, args...)
 }
 
 func Fatal(msg string, args ...any) {

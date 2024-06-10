@@ -21,7 +21,7 @@ func NewRootCmd() (*cobra.Command, error) {
 A very simple cli.`,
 		SilenceUsage: true,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			return log.InitLogger(cfg)
+			return log.InitLogger(cmd.Context(), cfg)
 		},
 	}
 
