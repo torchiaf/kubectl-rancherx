@@ -6,18 +6,88 @@ import (
 	"io"
 	"log/slog"
 	"os"
+	"regexp"
+
+	"github.com/lmittmann/tint"
 )
 
 var ctx context.Context
 
 const (
 	levelTrace = slog.Level(-8)
+	levelDebug = slog.Level(-4)
+	levelInfo  = slog.Level(0)
+	levelWarn  = slog.Level(4)
+	levelError = slog.Level(8)
 	levelFatal = slog.Level(12)
 )
 
-var levelNames = map[slog.Leveler]string{
-	levelTrace: "TRACE",
-	levelFatal: "FATAL",
+const (
+	red     = "\033[31m"
+	green   = "\033[32m"
+	yellow  = "\033[33m"
+	blue    = "\033[34m"
+	magenta = "\033[35m"
+	cyan    = "\033[36m"
+	gray    = "\033[37m"
+	white   = "\033[97m"
+)
+
+type customLevel struct {
+	label string
+	color string
+}
+
+var customLevels = map[slog.Leveler]customLevel{
+	levelDebug: {
+		label: "DEBUG",
+		color: green,
+	},
+	levelInfo: {
+		label: "INFO",
+		color: blue,
+	},
+	levelWarn: {
+		label: "WARN",
+		color: yellow,
+	},
+	levelError: {
+		label: "ERROR",
+		color: red,
+	},
+	levelTrace: {
+		label: "TRACE",
+		color: magenta,
+	},
+	levelFatal: {
+		label: "FATAL",
+		color: blue,
+	},
+}
+
+type fileWriter struct {
+	w io.Writer
+}
+
+func (e fileWriter) Write(p []byte) (int, error) {
+
+	re := regexp.MustCompile(`\033[[0-9;]*m`)
+
+	// Trim colors from output
+	newStr := re.ReplaceAllString(string(p), "")
+
+	data := []byte(newStr)
+
+	n, err := e.w.Write(data)
+
+	if err != nil {
+		return n, err
+	}
+	if n != len(data) {
+		return n, io.ErrShortWrite
+	}
+
+	return len(p), nil
 }
 
 var LogFileName string
@@ -42,20 +112,22 @@ func InitLogger() error {
 			return err
 		}
 
-		ioWriter = io.MultiWriter(os.Stdout, f)
+		fileWriter := &fileWriter{w: f}
+
+		ioWriter = io.MultiWriter(os.Stdout, fileWriter)
 	}
 
-	logger = slog.New(slog.NewTextHandler(ioWriter, &slog.HandlerOptions{
+	logger = slog.New(tint.NewHandler(ioWriter, &tint.Options{
 		Level: slog.Level(8 - LogLevel), // We want reverse levels
 		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
 			if a.Key == slog.LevelKey {
 				level := a.Value.Any().(slog.Level)
-				levelLabel, exists := levelNames[level]
+				levelLabel, exists := customLevels[level]
 				if !exists {
-					levelLabel = level.String()
+					levelLabel.label = level.String()
 				}
 
-				a.Value = slog.StringValue(levelLabel)
+				a.Value = slog.StringValue(levelLabel.color + levelLabel.label)
 			}
 
 			return a
