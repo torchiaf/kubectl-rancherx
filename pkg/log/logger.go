@@ -90,19 +90,21 @@ func (e fileWriter) Write(p []byte) (int, error) {
 	return len(p), nil
 }
 
-var LogFileName string
-var LogLevel int
+type LogConfig struct {
+	LogLevel    int
+	LogFileName string
+}
 
 var logger *slog.Logger
 
-func InitLogger() error {
+func InitLogger(cfg *LogConfig) error {
 
 	ctx = context.Background()
 
 	var ioWriter io.Writer = os.Stdout
 
-	if LogFileName != "" {
-		logFile := fmt.Sprintf("%s.log", LogFileName)
+	if cfg.LogFileName != "" {
+		logFile := fmt.Sprintf("%s.log", cfg.LogFileName)
 
 		var f *os.File
 		var err error
@@ -118,7 +120,7 @@ func InitLogger() error {
 	}
 
 	logger = slog.New(tint.NewHandler(ioWriter, &tint.Options{
-		Level: slog.Level(8 - LogLevel), // We want reverse levels
+		Level: slog.Level(8 - cfg.LogLevel), // We want reverse levels
 		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
 			if a.Key == slog.LevelKey {
 				level := a.Value.Any().(slog.Level)

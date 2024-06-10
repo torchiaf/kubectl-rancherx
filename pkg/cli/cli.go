@@ -12,6 +12,8 @@ import (
 )
 
 func NewRootCmd() (*cobra.Command, error) {
+	cfg := &log.LogConfig{}
+
 	rootCmd := &cobra.Command{
 		Use:   "kubectl-rancherx",
 		Short: "kubectl-rancherx helps to create k8s objects in a Rancher cluster",
@@ -19,7 +21,7 @@ func NewRootCmd() (*cobra.Command, error) {
 A very simple cli.`,
 		SilenceUsage: true,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			return log.InitLogger()
+			return log.InitLogger(cfg)
 		},
 	}
 
@@ -62,8 +64,8 @@ A very simple cli.`,
 		newDeleteCmd(client),
 	)
 
-	rootCmd.PersistentFlags().IntVarP(&log.LogLevel, "verbosity", "v", 0, "level of log verbosity")
-	rootCmd.PersistentFlags().StringVarP(&log.LogFileName, "log-file", "l", "", "print logs to file")
+	rootCmd.PersistentFlags().IntVarP(&cfg.LogLevel, "verbosity", "v", 0, "level of log verbosity")
+	rootCmd.PersistentFlags().StringVarP(&cfg.LogFileName, "log-file", "l", "", "print logs to file")
 
 	return rootCmd, nil
 }
