@@ -19,10 +19,7 @@ func NewRootCmd() (*cobra.Command, error) {
 A very simple cli.`,
 		SilenceUsage: true,
 		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-			if err := log.InitLogger(); err != nil {
-				return err
-			}
-			return nil
+			return log.InitLogger()
 		},
 	}
 
