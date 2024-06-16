@@ -17,7 +17,7 @@ func newGetCmd(client *Client) *cobra.Command {
 		Use:           "get",
 		Short:         "Display one or many Rancher resources.",
 		Args:          cobra.ExactArgs(1),
-		RunE:          ValidateSubCommand(resources),
+		RunE:          ValidateSubCommand(rancher.Resources),
 		SilenceErrors: true,
 	}
 
@@ -29,7 +29,7 @@ func newGetCmd(client *Client) *cobra.Command {
 }
 
 func newGetProjectsCmd(client *rest.RESTClient) *cobra.Command {
-	cfg := &ProjectConfig{}
+	cfg := &rancher.ProjectConfig{}
 
 	cmd := &cobra.Command{
 		Use:     "project",
