@@ -2,19 +2,18 @@ package flag
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 )
 
-type SetFlag string
+type Set map[string]string
 
-func (e *SetFlag) String() string {
-	return string(*e)
+func (e *Set) String() string {
+	return string("")
 }
 
-func (e *SetFlag) Set(v string) error {
+func (e *Set) Set(v string) error {
 
-	output := map[string]string{}
+	output := make(map[string]string)
 
 	kv := strings.Split(v, "=")
 
@@ -22,15 +21,19 @@ func (e *SetFlag) Set(v string) error {
 		return errors.New(`must be "key=value" format`)
 	}
 
+	if *e != nil {
+		for k, v := range *e {
+			output[k] = v
+		}
+	}
+
 	output[kv[0]] = kv[1]
 
-	fmt.Println(output)
-
-	*e = SetFlag(v)
+	*e = Set(output)
 
 	return nil
 }
 
-func (e *SetFlag) Type() string {
+func (e *Set) Type() string {
 	return "key=value"
 }
