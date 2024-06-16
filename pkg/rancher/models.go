@@ -1,11 +1,11 @@
 package rancher
 
 import (
-	f "github.com/torchiaf/kubectl-rancherx/pkg/flag"
+	"github.com/torchiaf/kubectl-rancherx/pkg/flag"
 )
 
 type ProjectConfig struct {
-	SetFlag     f.SetFlag
+	Set         flag.Set
 	DisplayName string
 	ClusterName string
 }

@@ -2,21 +2,49 @@ package rancher
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
+	// "github.com/itchyny/gojq"
+	"github.com/tidwall/sjson"
+
 	apiv3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
+	"github.com/torchiaf/kubectl-rancherx/pkg/flag"
 	"github.com/torchiaf/kubectl-rancherx/pkg/manager"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
 )
 
-var Resources = []string{
-	"project", "projects",
+func patchStruct[T comparable](obj *T, set flag.Set) error {
+	data, err := json.Marshal(obj)
+	if err != nil {
+		return err
+	}
+
+	newValue := string(data)
+
+	for k, v := range set {
+		newValue, err = sjson.Set(newValue, k, v)
+		if err != nil {
+			return err
+		}
+	}
+
+	json.Unmarshal([]byte(newValue), &obj)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 const (
 	project = "projects"
 )
+
+var Resources = []string{
+	"project", "projects",
+}
 
 func GetProject(ctx context.Context, client *rest.RESTClient, name string, clusterName string) (*apiv3.Project, error) {
 
@@ -74,6 +102,13 @@ func CreateProject(ctx context.Context, client *rest.RESTClient, name string, cf
 			ClusterName: cfg.ClusterName,
 			DisplayName: cfg.DisplayName,
 		},
+	}
+
+	if cfg.Set != nil {
+		err := patchStruct(&obj, cfg.Set)
+		if err != nil {
+			return err
+		}
 	}
 
 	return manager.Create(ctx, client, project, cfg.ClusterName, obj)

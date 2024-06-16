@@ -51,7 +51,7 @@ func newCreateProjectCmd(client *rest.RESTClient) *cobra.Command {
 		SilenceErrors: true,
 	}
 
-	cmd.Flags().Var(&cfg.SetFlag, "set", "Set flag description TODO")
+	cmd.Flags().Var(&cfg.Set, "set", "Add project's property by key=value format")
 	cmd.Flags().StringVar(&cfg.DisplayName, "display-name", "", "DisplayName is the human-readable name for the project.")
 	cmd.Flags().StringVar(&cfg.ClusterName, "cluster-name", "", "ClusterName is the name of the cluster the project belongs to. Immutable.")
 	cmd.MarkFlagRequired("display-name")
