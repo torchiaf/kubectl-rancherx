@@ -33,7 +33,7 @@
       "request": "launch",
       "mode": "auto",
       "program": "main.go",
-      "args": ["create", "project", "pippo", "--display-name", "pippo", "--cluster-name", "local"]
+      "args": ["create", "project", "pippo", "--display-name", "pippo", "--cluster-name", "local", "--set", "foo=bar"]
     },
     {
       "name": "Command: Delete Project",
