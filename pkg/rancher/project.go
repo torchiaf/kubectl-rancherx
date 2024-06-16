@@ -4,12 +4,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 
 	// "github.com/itchyny/gojq"
 	"github.com/tidwall/sjson"
 
 	apiv3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
 	"github.com/torchiaf/kubectl-rancherx/pkg/flag"
+	"github.com/torchiaf/kubectl-rancherx/pkg/log"
 	"github.com/torchiaf/kubectl-rancherx/pkg/manager"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
@@ -105,6 +107,12 @@ func CreateProject(ctx context.Context, client *rest.RESTClient, name string, cf
 	}
 
 	if cfg.Set != nil {
+		log.Info("Apply --set flag to project",
+			slog.Group("args",
+				"name", name,
+				"set", cfg.Set,
+			),
+		)
 		err := patchStruct(&obj, cfg.Set)
 		if err != nil {
 			return err
