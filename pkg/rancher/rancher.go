@@ -10,14 +10,13 @@ import (
 	"github.com/tidwall/sjson"
 
 	apiv3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
-	"github.com/torchiaf/kubectl-rancherx/pkg/flag"
 	"github.com/torchiaf/kubectl-rancherx/pkg/log"
 	"github.com/torchiaf/kubectl-rancherx/pkg/manager"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
 )
 
-func patchStruct[T comparable](obj *T, set flag.Set) error {
+func patchStruct[T comparable](obj *T, values map[string]string) error {
 	data, err := json.Marshal(obj)
 	if err != nil {
 		return err
@@ -25,14 +24,14 @@ func patchStruct[T comparable](obj *T, set flag.Set) error {
 
 	newValue := string(data)
 
-	for k, v := range set {
+	for k, v := range values {
 		newValue, err = sjson.Set(newValue, k, v)
 		if err != nil {
 			return err
 		}
 	}
 
-	json.Unmarshal([]byte(newValue), &obj)
+	err = json.Unmarshal([]byte(newValue), &obj)
 	if err != nil {
 		return err
 	}
@@ -107,7 +106,9 @@ func CreateProject(ctx context.Context, client *rest.RESTClient, name string, cf
 	}
 
 	if cfg.Set != nil {
-		log.Info("Apply --set flag to project",
+		log.Info(
+			ctx,
+			"set resource property",
 			slog.Group("args",
 				"name", name,
 				"set", cfg.Set,
