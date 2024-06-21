@@ -8,7 +8,7 @@ import (
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
 
-	log "github.com/torchiaf/kubectl-rancherx/pkg/log"
+	"github.com/torchiaf/kubectl-rancherx/pkg/log"
 )
 
 func NewRootCmd() (*cobra.Command, error) {
