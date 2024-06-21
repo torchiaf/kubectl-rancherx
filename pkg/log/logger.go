@@ -95,9 +95,7 @@ type LogConfig struct {
 
 var logger *slog.Logger
 
-func InitLogger(context context.Context, cfg *LogConfig) error {
-
-	ctx = context
+func InitLogger(ctx context.Context, cfg *LogConfig) error {
 
 	var ioWriter io.Writer = os.Stdout
 
