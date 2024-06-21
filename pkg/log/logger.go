@@ -93,7 +93,6 @@ type LogConfig struct {
 	LogFileName string
 }
 
-var ctx context.Context
 var logger *slog.Logger
 
 func InitLogger(context context.Context, cfg *LogConfig) error {
