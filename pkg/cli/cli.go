@@ -7,15 +7,22 @@ import (
 	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
+
+	"github.com/torchiaf/kubectl-rancherx/pkg/log"
 )
 
 func NewRootCmd() (*cobra.Command, error) {
+	cfg := &log.Config{}
+
 	rootCmd := &cobra.Command{
 		Use:   "kubectl-rancherx",
 		Short: "kubectl-rancherx helps to create k8s objects in a Rancher cluster",
 		Long: `
 A very simple cli.`,
 		SilenceUsage: true,
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			return log.InitLogger(cmd.Context(), cfg)
+		},
 	}
 
 	rancherXScheme := runtime.NewScheme()
@@ -56,6 +63,10 @@ A very simple cli.`,
 		newCreateCmd(client),
 		newDeleteCmd(client),
 	)
+
+	rootCmd.PersistentFlags().IntVarP(&cfg.LogLevel, "verbosity", "v", 0, "level of log verbosity")
+	rootCmd.PersistentFlags().BoolVar(&cfg.NoLabelColor, "no-color", false, "disable colors in logs output")
+	rootCmd.PersistentFlags().StringVar(&cfg.LogFileName, "log-file", "", "print logs to file")
 
 	return rootCmd, nil
 }
