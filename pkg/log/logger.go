@@ -11,6 +11,15 @@ import (
 	"github.com/lmittmann/tint"
 )
 
+type customLevel struct {
+	label string
+	color string
+}
+
+type fileWriter struct {
+	w io.Writer
+}
+
 const (
 	levelTrace = slog.Level(-8)
 	levelDebug = slog.Level(-4)
@@ -30,11 +39,6 @@ const (
 	gray    = "\033[37m"
 	white   = "\033[97m"
 )
-
-type customLevel struct {
-	label string
-	color string
-}
 
 var customLevels = map[slog.Leveler]customLevel{
 	levelDebug: {
@@ -65,14 +69,14 @@ var customLevels = map[slog.Leveler]customLevel{
 
 var colorRegex = regexp.MustCompile(`\033[[0-9;]*m`)
 
-type fileWriter struct {
-	w io.Writer
+func trimColorLabels(src string) string {
+	return colorRegex.ReplaceAllString(src, "")
 }
 
 func (e fileWriter) Write(p []byte) (int, error) {
 
 	// Trim colors from output
-	newStr := colorRegex.ReplaceAllString(string(p), "")
+	newStr := trimColorLabels(string(p))
 
 	data := []byte(newStr)
 
