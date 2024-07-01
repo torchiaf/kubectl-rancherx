@@ -8,3 +8,9 @@ go run pkg/docgen/main.go
 ```
 
 [Commands list](docs/kubectl-rancherx.md)
+
+### Test
+
+```bash
+go test ./...
+```
