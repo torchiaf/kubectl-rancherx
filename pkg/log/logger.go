@@ -63,16 +63,16 @@ var customLevels = map[slog.Leveler]customLevel{
 	},
 }
 
+var colorRegex = regexp.MustCompile(`\033[[0-9;]*m`)
+
 type fileWriter struct {
 	w io.Writer
 }
 
 func (e fileWriter) Write(p []byte) (int, error) {
 
-	re := regexp.MustCompile(`\033[[0-9;]*m`)
-
 	// Trim colors from output
-	newStr := re.ReplaceAllString(string(p), "")
+	newStr := colorRegex.ReplaceAllString(string(p), "")
 
 	data := []byte(newStr)
 
