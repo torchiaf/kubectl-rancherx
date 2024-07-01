@@ -88,14 +88,14 @@ func (e fileWriter) Write(p []byte) (int, error) {
 	return len(p), nil
 }
 
-type LogConfig struct {
+type Config struct {
 	LogLevel    int
 	LogFileName string
 }
 
 var logger *slog.Logger
 
-func InitLogger(ctx context.Context, cfg *LogConfig) error {
+func InitLogger(ctx context.Context, cfg *Config) error {
 
 	var ioWriter io.Writer = os.Stdout
 

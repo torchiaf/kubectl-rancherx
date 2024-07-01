@@ -12,7 +12,7 @@ import (
 )
 
 func NewRootCmd() (*cobra.Command, error) {
-	cfg := &log.LogConfig{}
+	cfg := &log.Config{}
 
 	rootCmd := &cobra.Command{
 		Use:   "kubectl-rancherx",
