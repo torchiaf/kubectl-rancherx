@@ -25,3 +25,6 @@ dist
 
 # Dev files
 dev
+
+# Log files
+*.log
