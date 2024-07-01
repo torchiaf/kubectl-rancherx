@@ -65,6 +65,7 @@ A very simple cli.`,
 	)
 
 	rootCmd.PersistentFlags().IntVarP(&cfg.LogLevel, "verbosity", "v", 0, "level of log verbosity")
+	rootCmd.PersistentFlags().BoolVar(&cfg.NoLabelColor, "no-color", false, "disable colors in logs output")
 	rootCmd.PersistentFlags().StringVar(&cfg.LogFileName, "log-file", "", "print logs to file")
 
 	return rootCmd, nil

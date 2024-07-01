@@ -89,8 +89,9 @@ func (e fileWriter) Write(p []byte) (int, error) {
 }
 
 type Config struct {
-	LogLevel    int
-	LogFileName string
+	LogLevel     int
+	LogFileName  string
+	NoLabelColor bool
 }
 
 func InitLogger(ctx context.Context, cfg *Config) error {
@@ -123,7 +124,11 @@ func InitLogger(ctx context.Context, cfg *Config) error {
 					levelLabel.label = level.String()
 				}
 
-				a.Value = slog.StringValue(levelLabel.color + levelLabel.label)
+				if cfg.NoLabelColor {
+					a.Value = slog.StringValue(levelLabel.label)
+				} else {
+					a.Value = slog.StringValue(levelLabel.color + levelLabel.label)
+				}
 			}
 
 			return a
