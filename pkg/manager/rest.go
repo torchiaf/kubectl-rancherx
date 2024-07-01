@@ -24,14 +24,14 @@ func List[T runtime.Object](ctx context.Context, client *rest.RESTClient, resour
 		Into(obj)
 
 	if err != nil {
-		log.Trace(
+		log.Error(
 			ctx,
-			"manager.List",
+			"error listing resource",
 			slog.Group("args",
 				"resource", resource,
 				"namespace", namespace,
-				"err", err,
 			),
+			"err", err,
 		)
 
 		return err
@@ -39,7 +39,7 @@ func List[T runtime.Object](ctx context.Context, client *rest.RESTClient, resour
 
 	log.Trace(
 		ctx,
-		"manager.List",
+		"listing resource",
 		slog.Group("args",
 			"resource", resource,
 			"namespace", namespace,
@@ -65,22 +65,22 @@ func Get[T runtime.Object](ctx context.Context, client *rest.RESTClient, resourc
 		Into(obj)
 
 	if err != nil {
-		log.Trace(
+		log.Error(
 			ctx,
-			"manager.Get",
+			"error getting resource",
 			slog.Group("args",
 				"resource", resource,
 				"namespace", namespace,
 				"name", name,
-				"err", err,
 			),
+			"err", err,
 		)
 		return err
 	}
 
 	log.Trace(
 		ctx,
-		"manager.Get",
+		"getting resource",
 		slog.Group("args",
 			"resource", resource,
 			"namespace", namespace,
@@ -102,14 +102,14 @@ func Create(ctx context.Context, client *rest.RESTClient, resource string, names
 
 	err := res.Error()
 	if err != nil {
-		log.Trace(
+		log.Error(
 			ctx,
-			"manager.Create",
+			"error creating resource",
 			slog.Group("args",
 				"resource", resource,
 				"namespace", namespace,
-				"err", err,
 			),
+			"err", err,
 		)
 
 		return err
@@ -117,7 +117,7 @@ func Create(ctx context.Context, client *rest.RESTClient, resource string, names
 
 	log.Trace(
 		ctx,
-		"manager.Create",
+		"creating resource",
 		slog.Group("args",
 			"resource", resource,
 			"namespace", namespace,
@@ -138,15 +138,15 @@ func Delete(ctx context.Context, client *rest.RESTClient, resource string, names
 
 	err := res.Error()
 	if err != nil {
-		log.Trace(
+		log.Error(
 			ctx,
-			"manager.Delete",
+			"error deleting resource",
 			slog.Group("args",
 				"resource", resource,
 				"namespace", namespace,
 				"name", name,
-				"err", err,
 			),
+			"err", err,
 		)
 
 		return err
@@ -154,7 +154,7 @@ func Delete(ctx context.Context, client *rest.RESTClient, resource string, names
 
 	log.Trace(
 		ctx,
-		"manager.Delete",
+		"deleting resource",
 		slog.Group("args",
 			"resource", resource,
 			"namespace", namespace,

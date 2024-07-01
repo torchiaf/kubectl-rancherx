@@ -93,8 +93,6 @@ type Config struct {
 	LogFileName string
 }
 
-var logger *slog.Logger
-
 func InitLogger(ctx context.Context, cfg *Config) error {
 
 	var ioWriter io.Writer = os.Stdout
@@ -115,7 +113,7 @@ func InitLogger(ctx context.Context, cfg *Config) error {
 		ioWriter = io.MultiWriter(os.Stdout, fileWriter)
 	}
 
-	logger = slog.New(tint.NewHandler(ioWriter, &tint.Options{
+	logger := slog.New(tint.NewHandler(ioWriter, &tint.Options{
 		Level: slog.Level(8 - cfg.LogLevel), // We want reverse levels
 		ReplaceAttr: func(groups []string, a slog.Attr) slog.Attr {
 			if a.Key == slog.LevelKey {
@@ -141,25 +139,25 @@ func InitLogger(ctx context.Context, cfg *Config) error {
 }
 
 func Trace(ctx context.Context, msg string, args ...any) {
-	logger.Log(ctx, levelTrace, msg, args...)
+	slog.Log(ctx, levelTrace, msg, args...)
 }
 
 func Debug(ctx context.Context, msg string, args ...any) {
-	logger.DebugContext(ctx, msg, args...)
+	slog.DebugContext(ctx, msg, args...)
 }
 
 func Info(ctx context.Context, msg string, args ...any) {
-	logger.InfoContext(ctx, msg, args...)
+	slog.InfoContext(ctx, msg, args...)
 }
 
 func Warn(ctx context.Context, msg string, args ...any) {
-	logger.WarnContext(ctx, msg, args...)
+	slog.WarnContext(ctx, msg, args...)
 }
 
 func Error(ctx context.Context, msg string, args ...any) {
-	logger.ErrorContext(ctx, msg, args...)
+	slog.ErrorContext(ctx, msg, args...)
 }
 
 func Fatal(ctx context.Context, msg string, args ...any) {
-	logger.Log(ctx, levelFatal, msg, args...)
+	slog.Log(ctx, levelFatal, msg, args...)
 }
