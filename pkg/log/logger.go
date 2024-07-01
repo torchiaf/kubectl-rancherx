@@ -135,31 +135,31 @@ func InitLogger(ctx context.Context, cfg *LogConfig) error {
 
 	slog.SetDefault(logger)
 
-	Info("Logs enabled")
+	Info(ctx, "Logs enabled")
 
 	return nil
 }
 
-func Trace(msg string, args ...any) {
+func Trace(ctx context.Context, msg string, args ...any) {
 	logger.Log(ctx, levelTrace, msg, args...)
 }
 
-func Debug(msg string, args ...any) {
+func Debug(ctx context.Context, msg string, args ...any) {
 	logger.DebugContext(ctx, msg, args...)
 }
 
-func Info(msg string, args ...any) {
+func Info(ctx context.Context, msg string, args ...any) {
 	logger.InfoContext(ctx, msg, args...)
 }
 
-func Warn(msg string, args ...any) {
+func Warn(ctx context.Context, msg string, args ...any) {
 	logger.WarnContext(ctx, msg, args...)
 }
 
-func Error(msg string, args ...any) {
+func Error(ctx context.Context, msg string, args ...any) {
 	logger.ErrorContext(ctx, msg, args...)
 }
 
-func Fatal(msg string, args ...any) {
+func Fatal(ctx context.Context, msg string, args ...any) {
 	logger.Log(ctx, levelFatal, msg, args...)
 }
