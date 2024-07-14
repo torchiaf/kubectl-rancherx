@@ -5,7 +5,7 @@ import (
 )
 
 type ProjectConfig struct {
-	Set         flag.Set
 	DisplayName string
 	ClusterName string
+	Common      flag.CommonConfig
 }
