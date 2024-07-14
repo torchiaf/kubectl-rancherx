@@ -1,11 +1,7 @@
 package rancher
 
-import (
-	"github.com/torchiaf/kubectl-rancherx/pkg/flag"
-)
-
 type ProjectConfig struct {
-	Set         flag.Set
+	Set         []string
 	DisplayName string
 	ClusterName string
 }

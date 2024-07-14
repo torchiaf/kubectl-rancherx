@@ -4,39 +4,34 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log/slog"
 
-	// "github.com/itchyny/gojq"
-	"github.com/tidwall/sjson"
+	// "helm.sh/helm/v3/pkg/strvals"
 
 	apiv3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
-	"github.com/torchiaf/kubectl-rancherx/pkg/log"
 	"github.com/torchiaf/kubectl-rancherx/pkg/manager"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
 )
 
-func patchStruct[T comparable](obj *T, values map[string]string) error {
+func mergeValues[T comparable](obj T, cfg *ProjectConfig) (map[string]interface{}, error) {
+
+	dest := make(map[string]interface{})
+
 	data, err := json.Marshal(obj)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	newValue := string(data)
+	err = json.Unmarshal(data, &dest)
 
-	for k, v := range values {
-		newValue, err = sjson.Set(newValue, k, v)
-		if err != nil {
-			return err
-		}
-	}
+	// // User specified a value via --set
+	// for _, value := range cfg.Set {
+	// 	if err := strvals.ParseInto(value, dest); err != nil {
+	// 		return nil, errors.Wrap(err, "failed parsing --set data")
+	// 	}
+	// }
 
-	err = json.Unmarshal([]byte(newValue), &obj)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return dest, nil
 }
 
 const (
@@ -105,19 +100,13 @@ func CreateProject(ctx context.Context, client *rest.RESTClient, name string, cf
 		},
 	}
 
-	if cfg.Set != nil {
-		log.Info(
-			ctx,
-			"set resource property",
-			slog.Group("args",
-				"name", name,
-				"set", cfg.Set,
-			),
-		)
-		err := patchStruct(&obj, cfg.Set)
-		if err != nil {
-			return err
-		}
+	objMap, err := mergeValues(obj, cfg)
+
+	jsonData, _ := json.Marshal(objMap)
+
+	json.Unmarshal(jsonData, &obj)
+	if err != nil {
+		return err
 	}
 
 	return manager.Create(ctx, client, project, cfg.ClusterName, obj)
