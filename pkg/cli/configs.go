@@ -1,9 +1,8 @@
 package cli
 
 import (
-	"github.com/torchiaf/kubectl-rancherx/pkg/scheme"
+	apiv3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/kubernetes"
@@ -17,7 +16,7 @@ type Client struct {
 }
 
 func toRestClient(runtimeScheme *runtime.Scheme, config *rest.Config) (*rest.RESTClient, error) {
-	config.ContentConfig.GroupVersion = &schema.GroupVersion{Group: scheme.GroupName, Version: scheme.GroupVersion}
+	config.ContentConfig.GroupVersion = &apiv3.SchemeGroupVersion
 	config.APIPath = "/apis"
 	config.NegotiatedSerializer = serializer.NewCodecFactory(runtimeScheme)
 	config.UserAgent = rest.DefaultKubernetesUserAgent()
