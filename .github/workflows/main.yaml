@@ -10,7 +10,7 @@ permissions:
   contents: write
 
 jobs:
-  tests:
+  unit-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -22,7 +22,7 @@ jobs:
         with:
           go-version: "1.22"
 
-      - name: Tests
+      - name: Go Tests
         run: go test ./... -coverprofile=coverage.out
 
       - name: Upload coverage reports to Codecov
@@ -33,7 +33,7 @@ jobs:
           path: coverage.out
 
   generate-docs:
-    needs: tests
+    needs: unit-tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
