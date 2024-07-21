@@ -7,6 +7,7 @@ on:
       - 'dev-*'
 
 permissions:
+  actions: write
   contents: write
 
 jobs:
@@ -32,6 +33,17 @@ jobs:
           name: kubectl-rancherx-tests-coverage
           path: coverage.out
 
+  e2e-tests:
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Run Rancher
+        run: VERSION="v2.9-head" .github/scripts/rancher.sh
+
   generate-docs:
     needs: unit-tests
     runs-on: ubuntu-latest
@@ -53,6 +65,4 @@ jobs:
         with:
           branch: main
           commit_message: Update docs
-          push_options: '--force'
-
-  
+          push_options: '--force'      
