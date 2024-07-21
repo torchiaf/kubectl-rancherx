@@ -9,8 +9,8 @@ go run pkg/docgen/main.go
 
 [Commands list](docs/kubectl-rancherx.md)
 
-### Test
+### Tests
 
 ```bash
-go test ./...
+go test ./... -coverprofile=coverage.out
 ```
