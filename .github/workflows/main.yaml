@@ -43,5 +43,5 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run Rancher
+      - name: Install Rancher
         run: .github/scripts/install-rancher.sh "v2.9-head"
