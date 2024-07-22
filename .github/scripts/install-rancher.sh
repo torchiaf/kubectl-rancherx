@@ -55,12 +55,10 @@ curl -kL \
   https://localhost/v3/clusters/local?action=generateKubeconfig | \
   yq '.config' > kubeconfig.yaml
 
-export KUBECONFIG=kubeconfig.yaml
-
 sleep 2;
 
 echo ""
-kubectl cluster-info
+kubectl --kubeconfig=kubeconfig.yaml cluster-info
 if [ $? -ne 0 ]; then
   echo "Unable to get Rancher resources"
   exit 1

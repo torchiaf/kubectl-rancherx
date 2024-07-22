@@ -38,10 +38,23 @@ jobs:
 
   e2e-tests:
     runs-on: ubuntu-latest
+    env:
+      KUBECONFIG: kubeconfig.yaml
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
+
       - name: Install Rancher
         run: .github/scripts/install-rancher.sh "v2.9-head"
+
+      - name: Build rancherx
+        run: sh scripts/build.sh
+
+      - name: Test
+        run: ./dist/kubectl-rancherx get project --cluster-name local
