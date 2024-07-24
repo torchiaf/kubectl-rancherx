@@ -41,3 +41,20 @@ func (e *KubectlRancherx) Run(args ...string) (string, string, error) {
 	err := cmd.Run()
 	return outBuff.String(), errBuff.String(), err
 }
+
+func ParseOutTable(out string) [][]string {
+	outTable := [][]string{}
+
+	out = strings.TrimSpace(out)
+	rows := strings.Split(out, "\n")
+
+	for _, row := range rows {
+		rowCells := strings.FieldsFunc(row, func(r rune) bool {
+			return r == '\t'
+		})
+
+		outTable = append(outTable, rowCells)
+
+	}
+	return outTable
+}

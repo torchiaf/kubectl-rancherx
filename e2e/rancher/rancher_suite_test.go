@@ -1,4 +1,4 @@
-package rancher_test
+package e2e
 
 import (
 	"testing"

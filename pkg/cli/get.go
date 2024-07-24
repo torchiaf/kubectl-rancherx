@@ -2,7 +2,10 @@ package cli
 
 import (
 	"fmt"
+	"slices"
+	"strings"
 
+	v3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
 	"github.com/spf13/cobra"
 	"k8s.io/client-go/rest"
 
@@ -47,15 +50,21 @@ func newGetProjectsCmd(client *rest.RESTClient) *cobra.Command {
 			if len(args) > 0 {
 				projectMap := make(map[string]string)
 				for i := 0; i < len(projects.Items); i++ {
-					projectMap[projects.Items[i].Spec.DisplayName] = fmt.Sprintf("%s  %s", projects.Items[i].Name, projects.Items[i].Spec.DisplayName)
+					projectMap[projects.Items[i].Spec.DisplayName] = fmt.Sprintf("%s\t%s", projects.Items[i].Name, projects.Items[i].Spec.DisplayName)
 				}
 
 				for _, arg := range args {
 					fmt.Printf("%s\n", projectMap[arg])
 				}
 			} else {
-				for _, project := range projects.Items {
-					fmt.Printf("%s\n", fmt.Sprintf("%s  %s", project.Name, project.Spec.DisplayName))
+
+				items := projects.Items
+				slices.SortFunc(items, func(a, b v3.Project) int {
+					return strings.Compare(a.Spec.DisplayName, b.Spec.DisplayName)
+				})
+
+				for _, item := range items {
+					fmt.Printf("%s\n", fmt.Sprintf("%s\t%s", item.Name, item.Spec.DisplayName))
 				}
 			}
 
