@@ -39,8 +39,8 @@ jobs:
   e2e-tests:
     runs-on: ubuntu-latest
     env:
-      KUBECONFIG: kubeconfig.yaml
       RANCHER_VERSION: v2.9-head
+      KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
     steps:
       - uses: actions/checkout@v3
         with:
