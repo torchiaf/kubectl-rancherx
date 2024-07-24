@@ -15,7 +15,7 @@ var _ = Describe("Project", Ordered, func() {
 		Expect(err).To(BeNil())
 	})
 
-	Context("GetProject", func() {
+	Context("ListProjects", func() {
 		It("should get default projects list", func() {
 			out, _, err := rancherx.Run("get", "project", "--cluster-name", "local")
 			Expect(err).To(BeNil())

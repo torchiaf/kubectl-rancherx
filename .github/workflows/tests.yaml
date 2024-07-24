@@ -27,7 +27,7 @@ jobs:
           go-version: "1.22"
 
       - name: Go Tests
-        run: go test ./... -coverprofile=coverage.out
+        run: go test ./pkg/... -coverprofile=coverage.out # excludes ./e2e tests directory
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
@@ -57,5 +57,5 @@ jobs:
       - name: Build rancherx
         run: sh scripts/build.sh
 
-      - name: Test
-        run: ./dist/kubectl-rancherx get project --cluster-name local
+      - name: Run tests suite
+        run: go run github.com/onsi/ginkgo/v2/ginkgo e2e/rancher
