@@ -28,3 +28,6 @@ dev
 
 # Log files
 *.log
+
+# Cover files
+cover

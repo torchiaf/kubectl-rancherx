@@ -41,6 +41,7 @@ jobs:
     env:
       RANCHER_VERSION: v2.9-head
       KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
+      GOCOVERDIR: cover
     steps:
       - uses: actions/checkout@v3
         with:
@@ -55,7 +56,7 @@ jobs:
         run: .github/scripts/install-rancher.sh ${{ env.RANCHER_VERSION }}
 
       - name: Build rancherx
-        run: sh scripts/build.sh
+        run: sh scripts/build-cover.sh
 
       - name: Run tests suite
         run: go run github.com/onsi/ginkgo/v2/ginkgo e2e/rancher
