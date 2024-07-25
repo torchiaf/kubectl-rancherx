@@ -45,4 +45,16 @@ var _ = Describe("Project", Ordered, func() {
 			Expect(outTable[2][1]).To(Equal("pippo"))
 		})
 	})
+
+	Context("GetProject", Ordered, func() {
+		It("should get project 'pippo'", func() {
+			out, _, err := rancherx.Run("get", "project", "pippo", "--cluster-name", "local")
+			Expect(err).To(BeNil())
+
+			outTable := ParseOutTable(out)
+
+			Expect(outTable[0][1]).To(Equal("pippo"))
+		})
+	})
+
 })
