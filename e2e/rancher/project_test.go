@@ -36,7 +36,7 @@ var _ = Describe("Project", Ordered, func() {
 			Expect(out).To(ContainSubstring("Project: \"pippo\" created"))
 		})
 
-		It("should get project 'pippo'", FlakeAttempts(5), func() {
+		It("should find project 'pippo'", FlakeAttempts(5), func() {
 			out, _, err := rancherx.Run("get", "project", "--cluster-name", "local")
 			Expect(err).To(BeNil())
 
@@ -57,4 +57,19 @@ var _ = Describe("Project", Ordered, func() {
 		})
 	})
 
+	Context("DeleteProject", Ordered, func() {
+		It("should delete project 'pippo'", func() {
+			out, _, err := rancherx.Run("delete", "project", "pippo", "--cluster-name", "local")
+			Expect(err).To(BeNil())
+
+			Expect(out).To(Equal("Project: \"pippo\" deleted \n"))
+		})
+
+		It("should not find project 'pippo'", FlakeAttempts(5), func() {
+			out, _, err := rancherx.Run("get", "project", "pippo", "--cluster-name", "local")
+			Expect(err).To(BeNil())
+
+			Expect(out).To(Equal("\n"))
+		})
+	})
 })
