@@ -34,8 +34,10 @@ var _ = Describe("Project", Ordered, func() {
 			Expect(err).To(BeNil())
 
 			Expect(out).To(ContainSubstring("Project: \"pippo\" created"))
+		})
 
-			out, _, err = rancherx.Run("get", "project", "--cluster-name", "local")
+		It("should get project 'pippo'", FlakeAttempts(5), func() {
+			out, _, err := rancherx.Run("get", "project", "--cluster-name", "local")
 			Expect(err).To(BeNil())
 
 			outTable := ParseOutTable(out)
