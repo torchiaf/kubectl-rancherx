@@ -59,4 +59,4 @@ jobs:
         run: sh scripts/build-cover.sh
 
       - name: Run tests suite
-        run: go run github.com/onsi/ginkgo/v2/ginkgo e2e/rancher
+        run: go run github.com/onsi/ginkgo/v2/ginkgo -v e2e/rancher
