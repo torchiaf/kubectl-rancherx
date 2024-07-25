@@ -31,3 +31,4 @@ dev
 
 # Cover files
 cover
+*-tests-coverage.out

@@ -27,21 +27,21 @@ jobs:
           go-version: "1.22"
 
       - name: Go Tests
-        run: go test ./pkg/... -coverprofile=coverage.out # excludes ./e2e tests directory
+        run: go test ./pkg/... -coverprofile=unit-tests-coverage.out # excludes ./e2e tests directory
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          name: kubectl-rancherx-tests-coverage
-          path: coverage.out
+          name: kubectl-rancherx-unit-tests-coverage
+          path: unit-tests-coverage.out
 
   e2e-tests:
     runs-on: ubuntu-latest
     env:
       RANCHER_VERSION: v2.9-head
       KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
-      GOCOVERDIR: cover
+      GOCOVERDIR: ${{ github.workspace }}/cover
     steps:
       - uses: actions/checkout@v3
         with:
@@ -56,7 +56,17 @@ jobs:
         run: .github/scripts/install-rancher.sh ${{ env.RANCHER_VERSION }}
 
       - name: Build rancherx
-        run: sh scripts/build-cover.sh
+        run: sh scripts/build-cover.sh ${{ env.GOCOVERDIR }}
 
       - name: Run tests suite
         run: go run github.com/onsi/ginkgo/v2/ginkgo -v e2e/rancher
+
+      - name: Extract coverage report
+        run: go tool covdata textfmt -i=${{ env.GOCOVERDIR }} -o e2e-tests-coverage.out
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          name: kubectl-rancherx-e2e-tests-coverage
+          path: e2e-tests-coverage.out
