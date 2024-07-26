@@ -31,7 +31,7 @@ TIME=0
 while [[ "$(curl --insecure -s -m 5 -o /dev/null -w ''%{http_code}'' https://localhost)" != "200" ]]; do
   sleep 5;
   TIME=$((TIME + 5))
-  printf "\r${TIME}s ... "
+  echo "${TIME}s ..."
 done
 
 echo ""
