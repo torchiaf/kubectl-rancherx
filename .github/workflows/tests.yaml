@@ -1,0 +1,79 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+      - 'dev-*'
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  actions: write
+  contents: write
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    env:
+      CODECOV_REPORT: unit-tests-coverage.out
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
+
+      - name: Go Tests
+        run: go test ./pkg/... -coverprofile=${{ env.CODECOV_REPORT }} # excludes ./e2e tests directory
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          flags: unit
+          token: ${{ secrets.CODECOV_TOKEN }}
+          name: kubectl-rancherx-unit-tests-coverage
+          file: ${{ env.CODECOV_REPORT }}
+          fail_ci_if_error: false
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    env:
+      RANCHER_VERSION: v2.9-head
+      KUBECONFIG: ${{ github.workspace }}/kubeconfig.yaml
+      GOCOVERDIR: ${{ github.workspace }}/cover
+      CODECOV_REPORT: e2e-tests-coverage.out
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
+
+      - name: Install Rancher
+        run: .github/scripts/install-rancher.sh ${{ env.RANCHER_VERSION }}
+
+      - name: Build rancherx
+        run: sh scripts/build-cover.sh ${{ env.GOCOVERDIR }}
+
+      - name: Run tests suite
+        run: go run github.com/onsi/ginkgo/v2/ginkgo -v e2e/rancher
+
+      - name: Extract coverage report
+        run: go tool covdata textfmt -i=${{ env.GOCOVERDIR }} -o ${{ env.CODECOV_REPORT }}
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          flags: e2e
+          token: ${{ secrets.CODECOV_TOKEN }}
+          name: kubectl-rancherx-e2e-tests-coverage
+          file: ${{ env.CODECOV_REPORT }}
+          fail_ci_if_error: false

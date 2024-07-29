@@ -57,7 +57,7 @@
       "request": "launch",
       "mode": "auto",
       "program": "main.go",
-      "args": ["get", "project", "p-xs2md", "--cluster-name", "local"]
+      "args": ["get", "project", "pippo", "--cluster-name", "local"]
     },
     {
       "name": "Generate error",

@@ -28,3 +28,7 @@ dev
 
 # Log files
 *.log
+
+# Cover files
+cover
+*-tests-coverage.out

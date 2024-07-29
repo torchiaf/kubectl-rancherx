@@ -1,0 +1,20 @@
+package e2e
+
+import (
+	{{.GinkgoImport}}
+	{{.GomegaImport}}
+
+	. "github.com/torchiaf/kubectl-rancherx/e2e"
+)
+
+var _ = {{.GinkgoPackage}}Describe("{{.Subject}}", Ordered, func() {
+
+	rancherx, cliErr := NewKubectlRancherx()
+
+	BeforeAll(func() {
+		Expect(cliErr).To(BeNil())
+	})
+
+	Context("TODO", func() {
+	})
+})
