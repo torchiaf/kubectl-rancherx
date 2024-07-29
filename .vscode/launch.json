@@ -60,6 +60,14 @@
       "args": ["get", "project", "pippo", "--cluster-name", "local"]
     },
     {
+      "name": "Command: Get Project, -o yaml",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "main.go",
+      "args": ["get", "project", "pippo", "--cluster-name", "local", "-o", "yaml"]
+    },
+    {
       "name": "Generate error",
       "type": "go",
       "request": "launch",

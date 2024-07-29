@@ -84,7 +84,7 @@ func newGetProjectsCmd(client *rest.RESTClient) *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&cfg.ClusterName, "cluster-name", "", "ClusterName is the name of the cluster the project belongs to. Immutable.")
-	cmd.Flags().StringVarP(&cfg.Common.Output, "output", "o", "", "Output format.")
+	cmd.Flags().StringVarP(&cfg.Common.Output, "output", "o", "", "Output format. One of: (json, yaml)")
 
 	cmd.MarkFlagRequired("cluster-name")
 	cmd.RegisterFlagCompletionFunc("cluster-name", ClustersFlagValidator(client))
