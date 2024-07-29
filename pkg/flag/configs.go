@@ -10,7 +10,7 @@ import (
 	"k8s.io/helm/pkg/strvals"
 )
 
-func MergeValues[T comparable](ctx context.Context, obj T, cfg *CommonConfig) error {
+func MergeValues(ctx context.Context, obj any, cfg *CommonConfig) error {
 
 	log.Info(
 		ctx,
