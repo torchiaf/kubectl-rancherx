@@ -7,12 +7,20 @@ toolchain go1.22.1
 replace k8s.io/client-go => github.com/rancher/client-go v1.27.4-rancher1
 
 require (
+	github.com/onsi/ginkgo/v2 v2.15.0
+	github.com/onsi/gomega v1.30.0
 	github.com/rancher/rancher/pkg/apis v0.0.0-20230317204402-a49d36c7e628
 	github.com/samber/lo v1.39.0
 	github.com/spf13/cobra v1.8.0
 	k8s.io/apimachinery v0.28.0-alpha.1
 	k8s.io/cli-runtime v0.27.9
 	k8s.io/client-go v12.0.0+incompatible
+)
+
+require (
+	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
+	github.com/google/pprof v0.0.0-20210720184732-4bb14d4b1be1 // indirect
+	golang.org/x/tools v0.16.1 // indirect
 )
 
 require (
