@@ -4,9 +4,8 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"k8s.io/client-go/rest"
-
 	rancher "github.com/torchiaf/kubectl-rancherx/pkg/rancher"
+	"k8s.io/client-go/rest"
 )
 
 func newCreateCmd(client *Client) *cobra.Command {
@@ -14,7 +13,7 @@ func newCreateCmd(client *Client) *cobra.Command {
 		Use:           "create",
 		Short:         "Create a Rancher resource from a file or from stdin.",
 		Args:          cobra.ExactArgs(1),
-		RunE:          ValidateSubCommand(resources),
+		RunE:          ValidateSubCommand(rancher.Resources),
 		SilenceErrors: true,
 	}
 
@@ -26,7 +25,7 @@ func newCreateCmd(client *Client) *cobra.Command {
 }
 
 func newCreateProjectCmd(client *rest.RESTClient) *cobra.Command {
-	cfg := &ProjectConfig{}
+	cfg := &rancher.ProjectConfig{}
 
 	cmd := &cobra.Command{
 		Use:               "project",
@@ -39,7 +38,7 @@ func newCreateProjectCmd(client *rest.RESTClient) *cobra.Command {
 
 			projectName := args[0]
 
-			err := rancher.CreateProject(c.Context(), client, projectName, cfg.DisplayName, cfg.ClusterName)
+			err := rancher.CreateProject(c.Context(), client, projectName, cfg)
 
 			if err != nil {
 				return fmt.Errorf("creating project: %w", err)
@@ -52,6 +51,7 @@ func newCreateProjectCmd(client *rest.RESTClient) *cobra.Command {
 		SilenceErrors: true,
 	}
 
+	cmd.Flags().StringArrayVar(&cfg.Common.Set, "set", []string{}, "set values on the command line (can specify multiple or separate values with commas: key1=val1,key2=val2)")
 	cmd.Flags().StringVar(&cfg.DisplayName, "display-name", "", "DisplayName is the human-readable name for the project.")
 	cmd.Flags().StringVar(&cfg.ClusterName, "cluster-name", "", "ClusterName is the name of the cluster the project belongs to. Immutable.")
 	cmd.MarkFlagRequired("display-name")

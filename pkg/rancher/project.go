@@ -5,24 +5,25 @@ import (
 	"fmt"
 
 	apiv3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
+	"github.com/torchiaf/kubectl-rancherx/pkg/flag"
 	"github.com/torchiaf/kubectl-rancherx/pkg/manager"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
 )
 
-type RancherResource struct {
-	Project string
-}
+const (
+	project = "projects"
+)
 
-var resource = &RancherResource{
-	Project: "projects",
+var Resources = []string{
+	"project", "projects",
 }
 
 func GetProject(ctx context.Context, client *rest.RESTClient, name string, clusterName string) (*apiv3.Project, error) {
 
 	projects := &apiv3.ProjectList{}
 
-	err := manager.List(ctx, client, resource.Project, clusterName, projects)
+	err := manager.List(ctx, client, project, clusterName, projects)
 	if err != nil {
 		return &apiv3.Project{}, err
 	}
@@ -40,7 +41,7 @@ func ListProjects(ctx context.Context, client *rest.RESTClient, clusterName stri
 
 	projects := &apiv3.ProjectList{}
 
-	err := manager.List(ctx, client, resource.Project, clusterName, projects)
+	err := manager.List(ctx, client, project, clusterName, projects)
 	if err != nil {
 		return &apiv3.ProjectList{}, err
 	}
@@ -48,18 +49,18 @@ func ListProjects(ctx context.Context, client *rest.RESTClient, clusterName stri
 	return projects, nil
 }
 
-func CreateProject(ctx context.Context, client *rest.RESTClient, name string, displayName string, clusterName string) error {
+func CreateProject(ctx context.Context, client *rest.RESTClient, name string, cfg *ProjectConfig) error {
 
 	projects := &apiv3.ProjectList{}
 
-	err := manager.List(ctx, client, resource.Project, clusterName, projects)
+	err := manager.List(ctx, client, project, cfg.ClusterName, projects)
 	if err != nil {
 		return err
 	}
 
 	for _, project := range projects.Items {
-		if displayName == project.Spec.DisplayName {
-			return fmt.Errorf("project %q already exists in cluster %q", displayName, clusterName)
+		if cfg.DisplayName == project.Spec.DisplayName {
+			return fmt.Errorf("project %q already exists in cluster %q", cfg.DisplayName, cfg.ClusterName)
 		}
 	}
 
@@ -71,19 +72,24 @@ func CreateProject(ctx context.Context, client *rest.RESTClient, name string, di
 			GenerateName: "p-",
 		},
 		Spec: apiv3.ProjectSpec{
-			ClusterName: clusterName,
-			DisplayName: displayName,
+			ClusterName: cfg.ClusterName,
+			DisplayName: cfg.DisplayName,
 		},
 	}
 
-	return manager.Create(ctx, client, resource.Project, clusterName, obj)
+	err = flag.MergeValues(ctx, &obj, &cfg.Common)
+	if err != nil {
+		return err
+	}
+
+	return manager.Create(ctx, client, project, cfg.ClusterName, obj)
 }
 
 func DeleteProject(ctx context.Context, client *rest.RESTClient, name string, clusterName string) error {
 
 	projects := &apiv3.ProjectList{}
 
-	err := manager.List(ctx, client, resource.Project, clusterName, projects)
+	err := manager.List(ctx, client, project, clusterName, projects)
 	if err != nil {
 		return err
 	}
@@ -101,5 +107,5 @@ func DeleteProject(ctx context.Context, client *rest.RESTClient, name string, cl
 		return fmt.Errorf("project %q not found in cluster %q", name, clusterName)
 	}
 
-	return manager.Delete(ctx, client, resource.Project, clusterName, projectName)
+	return manager.Delete(ctx, client, project, clusterName, projectName)
 }
