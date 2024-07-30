@@ -4,27 +4,29 @@ import (
 	"context"
 	"fmt"
 
-	apiv3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
+	v3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
+	"github.com/torchiaf/kubectl-rancherx/pkg/flag"
 	"github.com/torchiaf/kubectl-rancherx/pkg/manager"
+	"github.com/torchiaf/kubectl-rancherx/pkg/output"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
 )
 
-type RancherResource struct {
-	Project string
+const (
+	project = "projects"
+)
+
+var Resources = []string{
+	"project", "projects",
 }
 
-var resource = &RancherResource{
-	Project: "projects",
-}
+func GetProject(ctx context.Context, client *rest.RESTClient, name string, clusterName string) (*v3.Project, error) {
 
-func GetProject(ctx context.Context, client *rest.RESTClient, name string, clusterName string) (*apiv3.Project, error) {
+	projects := &v3.ProjectList{}
 
-	projects := &apiv3.ProjectList{}
-
-	err := manager.List(ctx, client, resource.Project, clusterName, projects)
+	err := manager.List(ctx, client, project, clusterName, projects)
 	if err != nil {
-		return &apiv3.Project{}, err
+		return &v3.Project{}, err
 	}
 
 	for _, project := range projects.Items {
@@ -33,57 +35,62 @@ func GetProject(ctx context.Context, client *rest.RESTClient, name string, clust
 		}
 	}
 
-	return &apiv3.Project{}, fmt.Errorf("project %q not found in cluster %q", name, clusterName)
+	return &v3.Project{}, fmt.Errorf("project %q not found in cluster %q", name, clusterName)
 }
 
-func ListProjects(ctx context.Context, client *rest.RESTClient, clusterName string) (*apiv3.ProjectList, error) {
+func ListProjects(ctx context.Context, client *rest.RESTClient, clusterName string) (*v3.ProjectList, error) {
 
-	projects := &apiv3.ProjectList{}
+	projects := &v3.ProjectList{}
 
-	err := manager.List(ctx, client, resource.Project, clusterName, projects)
+	err := manager.List(ctx, client, project, clusterName, projects)
 	if err != nil {
-		return &apiv3.ProjectList{}, err
+		return &v3.ProjectList{}, err
 	}
 
 	return projects, nil
 }
 
-func CreateProject(ctx context.Context, client *rest.RESTClient, name string, displayName string, clusterName string) error {
+func CreateProject(ctx context.Context, client *rest.RESTClient, name string, cfg *ProjectConfig) error {
 
-	projects := &apiv3.ProjectList{}
+	projects := &v3.ProjectList{}
 
-	err := manager.List(ctx, client, resource.Project, clusterName, projects)
+	err := manager.List(ctx, client, project, cfg.ClusterName, projects)
 	if err != nil {
 		return err
 	}
 
 	for _, project := range projects.Items {
-		if displayName == project.Spec.DisplayName {
-			return fmt.Errorf("project %q already exists in cluster %q", displayName, clusterName)
+		if cfg.DisplayName == project.Spec.DisplayName {
+			return fmt.Errorf("project %q already exists in cluster %q", cfg.DisplayName, cfg.ClusterName)
 		}
 	}
 
-	obj := &apiv3.Project{
+	obj := &v3.Project{
 		// ObjectMeta: v1.ObjectMeta{
 		// 	Name: name,
 		// },
 		ObjectMeta: v1.ObjectMeta{
 			GenerateName: "p-",
 		},
-		Spec: apiv3.ProjectSpec{
-			ClusterName: clusterName,
-			DisplayName: displayName,
+		Spec: v3.ProjectSpec{
+			ClusterName: cfg.ClusterName,
+			DisplayName: cfg.DisplayName,
 		},
 	}
 
-	return manager.Create(ctx, client, resource.Project, clusterName, obj)
+	err = flag.MergeValues(ctx, &obj, &cfg.Common)
+	if err != nil {
+		return err
+	}
+
+	return manager.Create(ctx, client, project, cfg.ClusterName, obj)
 }
 
 func DeleteProject(ctx context.Context, client *rest.RESTClient, name string, clusterName string) error {
 
-	projects := &apiv3.ProjectList{}
+	projects := &v3.ProjectList{}
 
-	err := manager.List(ctx, client, resource.Project, clusterName, projects)
+	err := manager.List(ctx, client, project, clusterName, projects)
 	if err != nil {
 		return err
 	}
@@ -101,5 +108,18 @@ func DeleteProject(ctx context.Context, client *rest.RESTClient, name string, cl
 		return fmt.Errorf("project %q not found in cluster %q", name, clusterName)
 	}
 
-	return manager.Delete(ctx, client, resource.Project, clusterName, projectName)
+	return manager.Delete(ctx, client, project, clusterName, projectName)
+}
+
+func PrintProject(ctx context.Context, items []v3.Project, cfg *ProjectConfig, def func(item v3.Project) string) error {
+	for _, item := range items {
+		item.ObjectMeta.ManagedFields = nil
+
+		err := output.Print(ctx, item, cfg.Common.Output, def)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
