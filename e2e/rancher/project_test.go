@@ -21,7 +21,7 @@ var _ = Describe("Project", Ordered, func() {
 	})
 
 	Context("ListProjects", func() {
-		It("should get default projects list", FlakeAttempts(5), func() {
+		It("should get default projects list", func() {
 			out, _, err := rancherx.Run("get", "project", "--cluster-name", "local")
 			Expect(err).To(BeNil())
 
@@ -30,6 +30,13 @@ var _ = Describe("Project", Ordered, func() {
 			Expect(len(outTable)).To(Equal(2))
 			Expect(outTable[0][1]).To(Equal("Default"))
 			Expect(outTable[1][1]).To(Equal("System"))
+		})
+
+		It("should not find projects in cluster pluto", func() {
+			out, _, err := rancherx.Run("get", "project", "--cluster-name", "pluto")
+			Expect(err).To(BeNil())
+
+			Expect(out).To(Equal("No projects found in \"pluto\" cluster.\n"))
 		})
 	})
 
@@ -93,6 +100,21 @@ var _ = Describe("Project", Ordered, func() {
 			Expect(project.Spec.DisplayName).To(Equal("pippo2"))
 			Expect(project.Spec.Description).To(Equal("bar1"))
 		})
+
+		It("should not find 'pippo3'", func() {
+			out, _, err := rancherx.Run("get", "project", "pippo3", "--cluster-name", "local")
+			Expect(err).To(BeNil())
+
+			Expect(out).To(Equal("Project \"pippo3\" not found.\n"))
+		})
+
+		It("should find 'pippo2' and not find 'pippo3'", func() {
+			out, _, err := rancherx.Run("get", "project", "pippo3", "pippo2", "--cluster-name", "local")
+			Expect(err).To(BeNil())
+
+			Expect(out).To(ContainSubstring("Project \"pippo3\" not found.\n"))
+			Expect(out).To(ContainSubstring("pippo2"))
+		})
 	})
 
 	Context("DeleteProject", Ordered, func() {
@@ -107,7 +129,7 @@ var _ = Describe("Project", Ordered, func() {
 			out, _, err := rancherx.Run("get", "project", "pippo", "--cluster-name", "local")
 			Expect(err).To(BeNil())
 
-			Expect(out).To(Equal(""))
+			Expect(out).To(Equal("Project \"pippo\" not found.\n"))
 		})
 	})
 
