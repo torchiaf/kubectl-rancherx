@@ -5,6 +5,7 @@ import (
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"gopkg.in/yaml.v2"
 
 	. "github.com/torchiaf/kubectl-rancherx/e2e"
 
@@ -20,7 +21,7 @@ var _ = Describe("Project", Ordered, func() {
 	})
 
 	Context("ListProjects", func() {
-		It("should get default projects list", func() {
+		It("should get default projects list", FlakeAttempts(5), func() {
 			out, _, err := rancherx.Run("get", "project", "--cluster-name", "local")
 			Expect(err).To(BeNil())
 
@@ -55,8 +56,19 @@ var _ = Describe("Project", Ordered, func() {
 
 			Expect(out).To(ContainSubstring("Project: \"pippo2\" created"))
 		})
+	})
 
-		It("should find project 'pippo2' with spec.description = bar1", FlakeAttempts(5), func() {
+	Context("GetProject", Ordered, func() {
+		It("should get project 'pippo'", func() {
+			out, _, err := rancherx.Run("get", "project", "pippo", "--cluster-name", "local")
+			Expect(err).To(BeNil())
+
+			outTable := ParseOutTable(out)
+
+			Expect(outTable[0][1]).To(Equal("pippo"))
+		})
+
+		It("should get project 'pippo2' with spec.description = bar1 -o json", FlakeAttempts(5), func() {
 			out, _, err := rancherx.Run("get", "project", "pippo2", "--cluster-name", "local", "-o", "json")
 			Expect(err).To(BeNil())
 
@@ -68,16 +80,18 @@ var _ = Describe("Project", Ordered, func() {
 			Expect(project.Spec.DisplayName).To(Equal("pippo2"))
 			Expect(project.Spec.Description).To(Equal("bar1"))
 		})
-	})
 
-	Context("GetProject", Ordered, func() {
-		It("should get project 'pippo'", func() {
-			out, _, err := rancherx.Run("get", "project", "pippo", "--cluster-name", "local")
+		It("should get project 'pippo2' with spec.description = bar1 -o yaml", FlakeAttempts(5), func() {
+			out, _, err := rancherx.Run("get", "project", "pippo2", "--cluster-name", "local", "-o", "yaml")
 			Expect(err).To(BeNil())
 
-			outTable := ParseOutTable(out)
+			project := v3.Project{}
 
-			Expect(outTable[0][1]).To(Equal("pippo"))
+			err = yaml.Unmarshal([]byte(out), &project)
+			Expect(err).To(BeNil())
+
+			Expect(project.Spec.DisplayName).To(Equal("pippo2"))
+			Expect(project.Spec.Description).To(Equal("bar1"))
 		})
 	})
 

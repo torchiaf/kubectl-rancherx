@@ -114,7 +114,11 @@ func DeleteProject(ctx context.Context, client *rest.RESTClient, name string, cl
 func PrintProject(ctx context.Context, items []v3.Project, cfg *ProjectConfig, def func(item v3.Project) string) error {
 	for _, item := range items {
 		item.ObjectMeta.ManagedFields = nil
-		return output.Print(ctx, item, cfg.Common.Output, def)
+
+		err := output.Print(ctx, item, cfg.Common.Output, def)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
