@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/cobra"
 	"k8s.io/client-go/rest"
 
-	"github.com/torchiaf/kubectl-rancherx/pkg/output"
 	rancher "github.com/torchiaf/kubectl-rancherx/pkg/rancher"
 )
 
@@ -69,10 +68,10 @@ func newGetProjectsCmd(client *rest.RESTClient) *cobra.Command {
 				items = append(items, projects.Items...)
 			}
 
-			output.Print(
+			rancher.PrintProject(
 				c.Context(),
 				items,
-				cfg.Common.Output,
+				cfg,
 				func(item v3.Project) string {
 					return fmt.Sprintf("%s\t%s", item.Name, item.Spec.DisplayName)
 				},
