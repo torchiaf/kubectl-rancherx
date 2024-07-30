@@ -43,10 +43,6 @@ func newGetProjectsCmd(client *rest.RESTClient) *cobra.Command {
 				return fmt.Errorf("getting projects: %w", err)
 			}
 
-			if len(projects.Items) == 0 {
-				fmt.Printf("No resources found in %q cluster.\n", cfg.ClusterName)
-			}
-
 			items := []v3.Project{}
 
 			if len(args) > 0 {
@@ -58,6 +54,8 @@ func newGetProjectsCmd(client *rest.RESTClient) *cobra.Command {
 				for _, arg := range args {
 					if projectMap[arg].Name != "" { // is not empty project
 						items = append(items, projectMap[arg])
+					} else {
+						fmt.Printf("Project %q not found.\n", arg)
 					}
 				}
 			} else {
@@ -66,6 +64,11 @@ func newGetProjectsCmd(client *rest.RESTClient) *cobra.Command {
 				})
 
 				items = append(items, projects.Items...)
+
+				if len(items) == 0 {
+					fmt.Printf("No projects found in %q cluster.\n", cfg.ClusterName)
+					return nil
+				}
 			}
 
 			rancher.PrintProject(
