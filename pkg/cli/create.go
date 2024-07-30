@@ -57,6 +57,7 @@ func newCreateProjectCmd(client *rest.RESTClient) *cobra.Command {
 	cmd.MarkFlagRequired("display-name")
 	cmd.MarkFlagRequired("cluster-name")
 	cmd.RegisterFlagCompletionFunc("cluster-name", ClustersFlagValidator(client))
+	cmd.RegisterFlagCompletionFunc("display-name", NoFileCompletions)
 
 	return cmd
 }
