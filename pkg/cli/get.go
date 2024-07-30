@@ -32,10 +32,11 @@ func newGetProjectsCmd(client *rest.RESTClient) *cobra.Command {
 	cfg := &ProjectConfig{}
 
 	cmd := &cobra.Command{
-		Use:     "project",
-		Aliases: []string{"projects"},
-		Short:   "Get projects",
-		Example: `kubectl rancherx get project [--cluster-name] [projectName]`,
+		Use:               "project",
+		Aliases:           []string{"projects"},
+		Short:             "Get projects",
+		Example:           `kubectl rancherx get project [--cluster-name] [projectName]`,
+		ValidArgsFunction: NoFileCompletions,
 		RunE: func(c *cobra.Command, args []string) error {
 
 			projects, err := rancher.ListProjects(c.Context(), client, cfg.ClusterName)
