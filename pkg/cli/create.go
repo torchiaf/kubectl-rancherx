@@ -36,9 +36,17 @@ func newCreateProjectCmd(client *rest.RESTClient) *cobra.Command {
 		ValidArgsFunction: NoFileCompletions,
 		RunE: func(c *cobra.Command, args []string) error {
 
+			var err error
 			projectName := args[0]
 
-			err := rancher.CreateProject(c.Context(), client, projectName, cfg)
+			if cfg.Interactive {
+				err = rancher.CreateProjectI(c.Context(), client, projectName)
+			} else {
+				c.MarkFlagRequired("display-name")
+				c.MarkFlagRequired("cluster-name")
+
+				err = rancher.CreateProject(c.Context(), client, projectName, cfg)
+			}
 
 			if err != nil {
 				return fmt.Errorf("creating project: %w", err)
@@ -54,8 +62,8 @@ func newCreateProjectCmd(client *rest.RESTClient) *cobra.Command {
 	cmd.Flags().StringArrayVar(&cfg.Common.Set, "set", []string{}, "set values on the command line (can specify multiple or separate values with commas: key1=val1,key2=val2)")
 	cmd.Flags().StringVar(&cfg.DisplayName, "display-name", "", "DisplayName is the human-readable name for the project.")
 	cmd.Flags().StringVar(&cfg.ClusterName, "cluster-name", "", "ClusterName is the name of the cluster the project belongs to. Immutable.")
-	cmd.MarkFlagRequired("display-name")
-	cmd.MarkFlagRequired("cluster-name")
+	cmd.Flags().BoolVarP(&cfg.Interactive, "interactive", "i", false, "Enable the interactive mode.")
+
 	cmd.RegisterFlagCompletionFunc("cluster-name", ClustersFlagValidator(client))
 	cmd.RegisterFlagCompletionFunc("display-name", NoFileCompletions)
 

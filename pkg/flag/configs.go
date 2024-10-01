@@ -10,13 +10,13 @@ import (
 	"k8s.io/helm/pkg/strvals"
 )
 
-func MergeValues(ctx context.Context, obj any, cfg *CommonConfig) error {
+func MergeValues(ctx context.Context, obj any, set []string) error {
 
 	log.Info(
 		ctx,
 		"merge values",
 		slog.Group("args",
-			"configs", cfg,
+			"configs", set,
 		),
 	)
 
@@ -33,7 +33,7 @@ func MergeValues(ctx context.Context, obj any, cfg *CommonConfig) error {
 	}
 
 	// User specified a value via --set
-	for _, value := range cfg.Set {
+	for _, value := range set {
 		if err := strvals.ParseInto(value, dest); err != nil {
 			return errors.Wrap(err, "failed parsing --set data")
 		}

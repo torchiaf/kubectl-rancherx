@@ -18,8 +18,10 @@ require (
 )
 
 require (
+	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e // indirect
 	github.com/go-task/slim-sprig v0.0.0-20230315185526-52ccab3ef572 // indirect
 	github.com/google/pprof v0.0.0-20210720184732-4bb14d4b1be1 // indirect
+	github.com/manifoldco/promptui v0.9.0 // indirect
 	golang.org/x/tools v0.16.1 // indirect
 )
 
