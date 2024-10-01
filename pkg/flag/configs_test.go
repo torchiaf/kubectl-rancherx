@@ -44,7 +44,7 @@ func TestMergeValues(t *testing.T) {
 	}
 
 	t.Run(test1.name, func(t *testing.T) {
-		err := MergeValues(test1.args.ctx, &test1.args.obj, test1.args.cfg)
+		err := MergeValues(test1.args.ctx, &test1.args.obj, test1.args.cfg.Set)
 		if err != nil {
 			t.Errorf("MergeValues() error = %v", err)
 		}
@@ -69,7 +69,7 @@ func TestMergeValues(t *testing.T) {
 	}
 
 	t.Run(test2.name, func(t *testing.T) {
-		err := MergeValues(test2.args.ctx, &test2.args.obj, test2.args.cfg)
+		err := MergeValues(test2.args.ctx, &test2.args.obj, test2.args.cfg.Set)
 		if err != nil {
 			t.Errorf("MergeValues() error = %v", err)
 		}
@@ -106,7 +106,7 @@ func TestMergeValues(t *testing.T) {
 	}
 
 	t.Run(test3.name, func(t *testing.T) {
-		err := MergeValues(test3.args.ctx, &test3.args.obj, test3.args.cfg)
+		err := MergeValues(test3.args.ctx, &test3.args.obj, test3.args.cfg.Set)
 		if err != nil {
 			t.Errorf("MergeValues() error = %v", err)
 		}
