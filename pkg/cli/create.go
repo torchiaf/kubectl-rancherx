@@ -34,6 +34,14 @@ func newCreateProjectCmd(client *rest.RESTClient) *cobra.Command {
 		Example:           `kubectl rancherx create project [--display-name] [--cluster-name] projectName`,
 		Args:              cobra.ExactArgs(1),
 		ValidArgsFunction: NoFileCompletions,
+		PersistentPreRunE: func(c *cobra.Command, args []string) error {
+			if !cfg.Interactive {
+				c.MarkFlagRequired("display-name")
+				c.MarkFlagRequired("cluster-name")
+			}
+
+			return nil
+		},
 		RunE: func(c *cobra.Command, args []string) error {
 
 			var err error
@@ -42,9 +50,6 @@ func newCreateProjectCmd(client *rest.RESTClient) *cobra.Command {
 			if cfg.Interactive {
 				err = rancher.CreateProjectI(c.Context(), client, projectName)
 			} else {
-				c.MarkFlagRequired("display-name")
-				c.MarkFlagRequired("cluster-name")
-
 				err = rancher.CreateProject(c.Context(), client, projectName, cfg)
 			}
 
