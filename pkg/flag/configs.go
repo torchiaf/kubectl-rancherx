@@ -12,7 +12,7 @@ import (
 
 func MergeValues(ctx context.Context, obj any, set []string) error {
 
-	log.Info(
+	log.Debug(
 		ctx,
 		"merge values",
 		slog.Group("args",

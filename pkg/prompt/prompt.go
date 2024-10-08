@@ -2,7 +2,6 @@ package prompt
 
 import (
 	"errors"
-	"fmt"
 	"os"
 
 	"github.com/manifoldco/promptui"
@@ -21,23 +20,19 @@ func PromptGetInput(pc PromptContent) string {
 		return nil
 	}
 
-	templates := &promptui.PromptTemplates{
-		Prompt: "{{ . }} ",
-	}
-
 	prompt := promptui.Prompt{
-		Label:     pc.Label,
-		Templates: templates,
-		Validate:  validate,
+		Label:    pc.Label,
+		Validate: validate,
+		Templates: &promptui.PromptTemplates{
+			Success: "Display Name: ",
+		},
 	}
 
 	result, err := prompt.Run()
+
 	if err != nil {
-		fmt.Printf("Prompt failed %v\n", err)
 		os.Exit(1)
 	}
-
-	fmt.Printf("Input: %s\n", result)
 
 	return result
 }
@@ -49,24 +44,24 @@ func PromptGetSelect(pc PromptContent, items []string) string {
 	var err error
 
 	for index < 0 {
-		prompt := promptui.SelectWithAdd{
-			Label: pc.Label,
+		prompt := promptui.Select{
 			Items: items,
+			Templates: &promptui.SelectTemplates{
+				Label:    pc.Label,
+				Selected: "Cluster: {{ . }}",
+			},
 		}
 
 		index, result, err = prompt.Run()
+
+		if err != nil {
+			os.Exit(1)
+		}
 
 		if index == -1 {
 			items = append(items, result)
 		}
 	}
-
-	if err != nil {
-		fmt.Printf("Prompt failed %v\n", err)
-		os.Exit(1)
-	}
-
-	fmt.Printf("Input: %s\n", result)
 
 	return result
 }
