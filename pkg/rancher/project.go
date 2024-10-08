@@ -64,7 +64,7 @@ func CreateProjectI(ctx context.Context, client *rest.RESTClient, name string) e
 
 	var items []string
 	for _, cluster := range clusters.Items {
-		items = append(items, cluster.Name)
+		items = append(items, cluster.Spec.DisplayName)
 	}
 
 	clusterNamePromptContent := prompt.PromptContent{
