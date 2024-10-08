@@ -8,6 +8,7 @@ import (
 )
 
 type PromptContent struct {
+	Validate func(input string) error
 	ErrorMsg string
 	Label    string
 }
@@ -16,6 +17,9 @@ func PromptGetInput(pc PromptContent) string {
 	validate := func(input string) error {
 		if len(input) <= 0 {
 			return errors.New(pc.ErrorMsg)
+		}
+		if pc.Validate != nil {
+			return pc.Validate(input)
 		}
 		return nil
 	}

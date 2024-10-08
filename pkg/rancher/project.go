@@ -73,9 +73,22 @@ func CreateProjectI(ctx context.Context, client *rest.RESTClient, name string) e
 	}
 	clusterName := prompt.PromptGetSelect(clusterNamePromptContent, items)
 
+	projects, err := ListProjects(ctx, client, clusterName)
+	if err != nil {
+		return err
+	}
+
 	displayNamePromptContent := prompt.PromptContent{
 		ErrorMsg: "Please provide a Display Name.",
 		Label:    "What name would you like to assign to the project?",
+		Validate: func(input string) error {
+			for _, project := range projects.Items {
+				if project.Spec.DisplayName == input {
+					return fmt.Errorf("Project '%s' already exists.", input)
+				}
+			}
+			return nil
+		},
 	}
 	displayName := prompt.PromptGetInput(displayNamePromptContent)
 
