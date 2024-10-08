@@ -44,7 +44,7 @@ func ClustersFlagValidator(client *rest.RESTClient) func(*cobra.Command, []strin
 		var list []string
 
 		for _, cluster := range clusters.Items {
-			list = append(list, cluster.Name)
+			list = append(list, cluster.Spec.DisplayName)
 		}
 
 		return list, cobra.ShellCompDirectiveNoFileComp
