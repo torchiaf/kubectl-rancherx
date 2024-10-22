@@ -76,9 +76,6 @@ func newGetProjectsCmd(client *rest.RESTClient) *cobra.Command {
 				c.Context(),
 				items,
 				cfg,
-				func(item v3.Project) string {
-					return fmt.Sprintf("%s\t%s", item.Name, item.Spec.DisplayName)
-				},
 			)
 
 			return nil

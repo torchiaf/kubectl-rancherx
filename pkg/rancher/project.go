@@ -175,15 +175,18 @@ func DeleteProject(ctx context.Context, client *rest.RESTClient, name string, cl
 	return manager.Delete(ctx, client, project, clusterName, projectName)
 }
 
-func PrintProject(ctx context.Context, items []v3.Project, cfg *ProjectConfig, def func(item v3.Project) string) error {
-	for _, item := range items {
-		item.ObjectMeta.ManagedFields = nil
-
-		err := output.Print(ctx, item, cfg.Common.Output, def)
-		if err != nil {
-			return err
-		}
+func PrintProject(ctx context.Context, projects []v3.Project, cfg *ProjectConfig) error {
+	table := output.Table[v3.Project]{
+		Header: []string{
+			"name",
+			"display-name",
+		},
+		Row: func(item v3.Project) []string {
+			return []string{
+				item.Name,
+				item.Spec.DisplayName,
+			}
+		},
 	}
-
-	return nil
+	return output.Print(ctx, cfg.Common.Output, projects, table)
 }
