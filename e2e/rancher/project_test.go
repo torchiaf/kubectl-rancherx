@@ -27,9 +27,11 @@ var _ = Describe("Project", Ordered, func() {
 
 			outTable := ParseOutTable(out)
 
-			Expect(len(outTable)).To(Equal(2))
-			Expect(outTable[0][1]).To(Equal("Default"))
-			Expect(outTable[1][1]).To(Equal("System"))
+			Expect(len(outTable)).To(Equal(3))
+			Expect(outTable[0][0]).To(Equal("NAME"))
+			Expect(outTable[0][1]).To(Equal("DISPLAY-NAME"))
+			Expect(outTable[1][1]).To(Equal("Default"))
+			Expect(outTable[2][1]).To(Equal("System"))
 		})
 
 		It("should not find projects in cluster pluto", func() {
@@ -54,7 +56,7 @@ var _ = Describe("Project", Ordered, func() {
 
 			outTable := ParseOutTable(out)
 
-			Expect(outTable[2][1]).To(Equal("pippo"))
+			Expect(outTable[3][1]).To(Equal("pippo"))
 		})
 
 		It("should create project 'pippo2' and --set spec.description = bar1", func() {
@@ -72,7 +74,7 @@ var _ = Describe("Project", Ordered, func() {
 
 			outTable := ParseOutTable(out)
 
-			Expect(outTable[0][1]).To(Equal("pippo"))
+			Expect(outTable[1][1]).To(Equal("pippo"))
 		})
 
 		It("should get project 'pippo2' with spec.description = bar1 -o json", FlakeAttempts(5), func() {
