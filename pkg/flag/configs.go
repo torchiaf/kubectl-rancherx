@@ -10,7 +10,7 @@ import (
 	"k8s.io/helm/pkg/strvals"
 )
 
-func MergeValues(ctx context.Context, obj any, set []string) error {
+func MergeValues[T any](ctx context.Context, orig T, set []string) (T, error) {
 
 	log.Debug(
 		ctx,
@@ -20,22 +20,24 @@ func MergeValues(ctx context.Context, obj any, set []string) error {
 		),
 	)
 
+	res := orig
+
 	dest := make(map[string]interface{})
 
-	jsonData, err := json.Marshal(obj)
+	jsonData, err := json.Marshal(orig)
 	if err != nil {
-		return err
+		return orig, err
 	}
 
 	err = json.Unmarshal(jsonData, &dest)
 	if err != nil {
-		return err
+		return orig, err
 	}
 
 	// User specified a value via --set
 	for _, value := range set {
 		if err := strvals.ParseInto(value, dest); err != nil {
-			return errors.Wrap(err, "failed parsing --set data")
+			return orig, errors.Wrap(err, "failed parsing --set data")
 		}
 	}
 
@@ -43,13 +45,13 @@ func MergeValues(ctx context.Context, obj any, set []string) error {
 
 	jsonData, err = json.Marshal(dest)
 	if err != nil {
-		return err
+		return orig, err
 	}
 
-	err = json.Unmarshal(jsonData, &obj)
+	err = json.Unmarshal(jsonData, &res)
 	if err != nil {
-		return err
+		return orig, err
 	}
 
-	return nil
+	return res, nil
 }

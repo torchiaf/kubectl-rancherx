@@ -142,12 +142,12 @@ func createProject(ctx context.Context, client *rest.RESTClient, data projectDat
 		},
 	}
 
-	err = flag.MergeValues(ctx, &obj, data.Set)
+	res, err := flag.MergeValues(ctx, obj, data.Set)
 	if err != nil {
 		return err
 	}
 
-	return manager.Create(ctx, client, project, data.ClusterName, obj)
+	return manager.Create(ctx, client, project, data.ClusterName, res)
 }
 
 func DeleteProject(ctx context.Context, client *rest.RESTClient, name string, clusterName string) error {
