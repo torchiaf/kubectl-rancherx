@@ -17,6 +17,7 @@ kubectl rancherx get project [--cluster-name] [projectName]
 ```
       --cluster-name string   ClusterName is the name of the cluster the project belongs to. Immutable.
   -h, --help                  help for project
+  -o, --output string         Output format. One of: (json, yaml)
 ```
 
 ### Options inherited from parent commands
