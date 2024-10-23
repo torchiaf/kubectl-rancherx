@@ -8,6 +8,7 @@ import (
 	"github.com/torchiaf/kubectl-rancherx/pkg/flag"
 	"github.com/torchiaf/kubectl-rancherx/pkg/manager"
 	"github.com/torchiaf/kubectl-rancherx/pkg/output"
+	"github.com/torchiaf/kubectl-rancherx/pkg/prompt"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
 )
@@ -18,6 +19,13 @@ const (
 
 var Resources = []string{
 	"project", "projects",
+}
+
+type projectData struct {
+	Name        string
+	DisplayName string
+	ClusterName string
+	Set         []string
 }
 
 func GetProject(ctx context.Context, client *rest.RESTClient, name string, clusterName string) (*v3.Project, error) {
@@ -50,18 +58,74 @@ func ListProjects(ctx context.Context, client *rest.RESTClient, clusterName stri
 	return projects, nil
 }
 
+func CreateProjectI(ctx context.Context, client *rest.RESTClient, name string) error {
+
+	clusters, _ := ListClusters(ctx, client)
+
+	var items []string
+	for _, cluster := range clusters.Items {
+		items = append(items, cluster.Spec.DisplayName)
+	}
+
+	clusterNamePromptContent := prompt.PromptContent{
+		ErrorMsg: "Please provide a Cluster Name.",
+		Label:    "Which cluster do you want to create the project in?",
+	}
+	clusterName := prompt.PromptGetSelect(clusterNamePromptContent, items)
+
+	projects, err := ListProjects(ctx, client, clusterName)
+	if err != nil {
+		return err
+	}
+
+	displayNamePromptContent := prompt.PromptContent{
+		ErrorMsg: "Please provide a Display Name.",
+		Label:    "What name would you like to assign to the project?",
+		Validate: func(input string) error {
+			for _, project := range projects.Items {
+				if project.Spec.DisplayName == input {
+					return fmt.Errorf("Project '%s' already exists.", input)
+				}
+			}
+			return nil
+		},
+	}
+	displayName := prompt.PromptGetInput(displayNamePromptContent)
+
+	data := projectData{
+		Name:        name,
+		ClusterName: clusterName,
+		DisplayName: displayName,
+		Set:         nil,
+	}
+
+	return createProject(ctx, client, data)
+}
+
 func CreateProject(ctx context.Context, client *rest.RESTClient, name string, cfg *ProjectConfig) error {
+
+	data := projectData{
+		Name:        name,
+		DisplayName: cfg.DisplayName,
+		ClusterName: cfg.ClusterName,
+		Set:         cfg.Common.Set,
+	}
+
+	return createProject(ctx, client, data)
+}
+
+func createProject(ctx context.Context, client *rest.RESTClient, data projectData) error {
 
 	projects := &v3.ProjectList{}
 
-	err := manager.List(ctx, client, project, cfg.ClusterName, projects)
+	err := manager.List(ctx, client, project, data.ClusterName, projects)
 	if err != nil {
 		return err
 	}
 
 	for _, project := range projects.Items {
-		if cfg.DisplayName == project.Spec.DisplayName {
-			return fmt.Errorf("project %q already exists in cluster %q", cfg.DisplayName, cfg.ClusterName)
+		if data.DisplayName == project.Spec.DisplayName {
+			return fmt.Errorf("project %q already exists in cluster %q", data.DisplayName, data.ClusterName)
 		}
 	}
 
@@ -73,17 +137,17 @@ func CreateProject(ctx context.Context, client *rest.RESTClient, name string, cf
 			GenerateName: "p-",
 		},
 		Spec: v3.ProjectSpec{
-			ClusterName: cfg.ClusterName,
-			DisplayName: cfg.DisplayName,
+			ClusterName: data.ClusterName,
+			DisplayName: data.DisplayName,
 		},
 	}
 
-	err = flag.MergeValues(ctx, &obj, &cfg.Common)
+	err = flag.MergeValues(ctx, &obj, data.Set)
 	if err != nil {
 		return err
 	}
 
-	return manager.Create(ctx, client, project, cfg.ClusterName, obj)
+	return manager.Create(ctx, client, project, data.ClusterName, obj)
 }
 
 func DeleteProject(ctx context.Context, client *rest.RESTClient, name string, clusterName string) error {
