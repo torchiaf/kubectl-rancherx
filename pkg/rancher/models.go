@@ -7,5 +7,6 @@ import (
 type ProjectConfig struct {
 	DisplayName string
 	ClusterName string
+	Interactive bool
 	Common      flag.CommonConfig
 }

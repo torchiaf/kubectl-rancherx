@@ -36,6 +36,14 @@
       "args": ["create", "project", "pippo", "--display-name", "pippo", "--cluster-name", "local", "--set", "foo=bar", "--set", "spec.description=bar1"]
     },
     {
+      "name": "Command: Create Project interactive",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "main.go",
+      "args": ["create", "project", "pippo", "-i"]
+    },
+    {
       "name": "Command: Delete Project",
       "type": "go",
       "request": "launch",
