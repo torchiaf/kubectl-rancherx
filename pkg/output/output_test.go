@@ -136,7 +136,7 @@ func TestPrint(t *testing.T) {
 			result := string(out)
 
 			if err != nil || result != tt.want {
-				t.Errorf("PrintTable() error = %v, want %v, is ---%v---", err, tt.want, result)
+				t.Errorf("PrintTable() error = %v, want %v, is %v", err, tt.want, result)
 			}
 		})
 	}
