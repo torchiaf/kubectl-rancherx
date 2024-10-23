@@ -6,7 +6,6 @@ import (
 	"os/exec"
 	"path"
 	"strings"
-	"unicode"
 )
 
 type KubectlRancherx struct {
@@ -50,7 +49,7 @@ func ParseOutTable(out string) [][]string {
 	rows := strings.Split(out, "\n")
 
 	for _, row := range rows {
-		rowCells := strings.FieldsFunc(row, unicode.IsSpace)
+		rowCells := strings.Fields(row)
 
 		outTable = append(outTable, rowCells)
 
