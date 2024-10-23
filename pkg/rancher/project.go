@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 
-	apiv3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
+	v3 "github.com/rancher/rancher/pkg/apis/management.cattle.io/v3"
 	"github.com/torchiaf/kubectl-rancherx/pkg/flag"
 	"github.com/torchiaf/kubectl-rancherx/pkg/manager"
+	"github.com/torchiaf/kubectl-rancherx/pkg/output"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/rest"
 )
@@ -19,13 +20,13 @@ var Resources = []string{
 	"project", "projects",
 }
 
-func GetProject(ctx context.Context, client *rest.RESTClient, name string, clusterName string) (*apiv3.Project, error) {
+func GetProject(ctx context.Context, client *rest.RESTClient, name string, clusterName string) (*v3.Project, error) {
 
-	projects := &apiv3.ProjectList{}
+	projects := &v3.ProjectList{}
 
 	err := manager.List(ctx, client, project, clusterName, projects)
 	if err != nil {
-		return &apiv3.Project{}, err
+		return &v3.Project{}, err
 	}
 
 	for _, project := range projects.Items {
@@ -34,16 +35,16 @@ func GetProject(ctx context.Context, client *rest.RESTClient, name string, clust
 		}
 	}
 
-	return &apiv3.Project{}, fmt.Errorf("project %q not found in cluster %q", name, clusterName)
+	return &v3.Project{}, fmt.Errorf("project %q not found in cluster %q", name, clusterName)
 }
 
-func ListProjects(ctx context.Context, client *rest.RESTClient, clusterName string) (*apiv3.ProjectList, error) {
+func ListProjects(ctx context.Context, client *rest.RESTClient, clusterName string) (*v3.ProjectList, error) {
 
-	projects := &apiv3.ProjectList{}
+	projects := &v3.ProjectList{}
 
 	err := manager.List(ctx, client, project, clusterName, projects)
 	if err != nil {
-		return &apiv3.ProjectList{}, err
+		return &v3.ProjectList{}, err
 	}
 
 	return projects, nil
@@ -51,7 +52,7 @@ func ListProjects(ctx context.Context, client *rest.RESTClient, clusterName stri
 
 func CreateProject(ctx context.Context, client *rest.RESTClient, name string, cfg *ProjectConfig) error {
 
-	projects := &apiv3.ProjectList{}
+	projects := &v3.ProjectList{}
 
 	err := manager.List(ctx, client, project, cfg.ClusterName, projects)
 	if err != nil {
@@ -64,14 +65,14 @@ func CreateProject(ctx context.Context, client *rest.RESTClient, name string, cf
 		}
 	}
 
-	obj := &apiv3.Project{
+	obj := &v3.Project{
 		// ObjectMeta: v1.ObjectMeta{
 		// 	Name: name,
 		// },
 		ObjectMeta: v1.ObjectMeta{
 			GenerateName: "p-",
 		},
-		Spec: apiv3.ProjectSpec{
+		Spec: v3.ProjectSpec{
 			ClusterName: cfg.ClusterName,
 			DisplayName: cfg.DisplayName,
 		},
@@ -87,7 +88,7 @@ func CreateProject(ctx context.Context, client *rest.RESTClient, name string, cf
 
 func DeleteProject(ctx context.Context, client *rest.RESTClient, name string, clusterName string) error {
 
-	projects := &apiv3.ProjectList{}
+	projects := &v3.ProjectList{}
 
 	err := manager.List(ctx, client, project, clusterName, projects)
 	if err != nil {
@@ -108,4 +109,17 @@ func DeleteProject(ctx context.Context, client *rest.RESTClient, name string, cl
 	}
 
 	return manager.Delete(ctx, client, project, clusterName, projectName)
+}
+
+func PrintProject(ctx context.Context, items []v3.Project, cfg *ProjectConfig, def func(item v3.Project) string) error {
+	for _, item := range items {
+		item.ObjectMeta.ManagedFields = nil
+
+		err := output.Print(ctx, item, cfg.Common.Output, def)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

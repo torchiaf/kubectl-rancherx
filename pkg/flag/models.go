@@ -1,5 +1,6 @@
 package flag
 
 type CommonConfig struct {
-	Set []string
+	Output string // json, yaml
+	Set    []string
 }
