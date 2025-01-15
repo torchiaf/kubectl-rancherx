@@ -14,7 +14,6 @@ import (
 func TestMergeValues(t *testing.T) {
 
 	type args struct {
-		ctx context.Context
 		obj apiv3.Project
 		cfg *CommonConfig
 	}
@@ -28,7 +27,6 @@ func TestMergeValues(t *testing.T) {
 	test1 := test{
 		name: "should merge Set value: --set key1=value1",
 		args: args{
-			ctx: context.TODO(),
 			obj: apiv3.Project{
 				Spec: apiv3.ProjectSpec{
 					Description: "",
@@ -44,11 +42,11 @@ func TestMergeValues(t *testing.T) {
 	}
 
 	t.Run(test1.name, func(t *testing.T) {
-		err := MergeValues(test1.args.ctx, &test1.args.obj, test1.args.cfg.Set)
+		res, err := MergeValues(context.Background(), test1.args.obj, test1.args.cfg.Set)
 		if err != nil {
 			t.Errorf("MergeValues() error = %v", err)
 		}
-		description := test1.args.obj.Spec.Description
+		description := res.Spec.Description
 		if description != "bar1" {
 			t.Errorf("MergeValues() description = %v, want %v", description, test1.want)
 		}
@@ -57,7 +55,6 @@ func TestMergeValues(t *testing.T) {
 	test2 := test{
 		name: "should not merge not existent Set value: --set key1=value1",
 		args: args{
-			ctx: context.TODO(),
 			obj: apiv3.Project{},
 			cfg: &CommonConfig{
 				Set: []string{
@@ -69,12 +66,12 @@ func TestMergeValues(t *testing.T) {
 	}
 
 	t.Run(test2.name, func(t *testing.T) {
-		err := MergeValues(test2.args.ctx, &test2.args.obj, test2.args.cfg.Set)
+		res, err := MergeValues(context.Background(), test2.args.obj, test2.args.cfg.Set)
 		if err != nil {
 			t.Errorf("MergeValues() error = %v", err)
 		}
 
-		jsonData, err := json.Marshal(test2.args.obj)
+		jsonData, err := json.Marshal(res)
 		if err != nil {
 			t.Errorf("MergeValues() error = %v", err)
 		}
@@ -89,7 +86,6 @@ func TestMergeValues(t *testing.T) {
 	test3 := test{
 		name: "should merge multiple Set values: --set key1=value1,key2=value2",
 		args: args{
-			ctx: context.TODO(),
 			obj: apiv3.Project{
 				ObjectMeta: v1.ObjectMeta{Labels: make(map[string]string)},
 				Spec: apiv3.ProjectSpec{
@@ -106,17 +102,17 @@ func TestMergeValues(t *testing.T) {
 	}
 
 	t.Run(test3.name, func(t *testing.T) {
-		err := MergeValues(test3.args.ctx, &test3.args.obj, test3.args.cfg.Set)
+		res, err := MergeValues(context.Background(), test3.args.obj, test3.args.cfg.Set)
 		if err != nil {
 			t.Errorf("MergeValues() error = %v", err)
 		}
 
-		description := test3.args.obj.Spec.Description
+		description := res.Spec.Description
 		if description != "bar1" {
 			t.Errorf("MergeValues() description = %v, want %v", description, "bar1")
 		}
 
-		generateName := test3.args.obj.ObjectMeta.GenerateName
+		generateName := res.ObjectMeta.GenerateName
 		if generateName != "-p" {
 			t.Errorf("MergeValues() generateName = %v, want %v", generateName, "-p")
 		}

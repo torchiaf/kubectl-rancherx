@@ -49,9 +49,7 @@ func ParseOutTable(out string) [][]string {
 	rows := strings.Split(out, "\n")
 
 	for _, row := range rows {
-		rowCells := strings.FieldsFunc(row, func(r rune) bool {
-			return r == '\t'
-		})
+		rowCells := strings.Fields(row)
 
 		outTable = append(outTable, rowCells)
 
