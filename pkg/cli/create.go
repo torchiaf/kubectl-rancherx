@@ -13,7 +13,7 @@ func newCreateCmd(client *Client) *cobra.Command {
 		Use:           "create",
 		Short:         "Create a Rancher resource from a file or from stdin.",
 		Args:          cobra.ExactArgs(1),
-		RunE:          ValidateSubCommand(rancher.Resources),
+		RunE:          ValidateSubCommand(rancher.ProjectResources),
 		SilenceErrors: true,
 	}
 

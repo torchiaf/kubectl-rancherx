@@ -17,7 +17,7 @@ const (
 	project = "projects"
 )
 
-var Resources = []string{
+var ProjectResources = []string{
 	"project", "projects",
 }
 
@@ -26,6 +26,13 @@ type projectData struct {
 	DisplayName string
 	ClusterName string
 	Set         []string
+}
+
+type ProjectConfig struct {
+	DisplayName string
+	ClusterName string
+	Interactive bool
+	Common      flag.CommonConfig
 }
 
 func GetProject(ctx context.Context, client *rest.RESTClient, name string, clusterName string) (*v3.Project, error) {

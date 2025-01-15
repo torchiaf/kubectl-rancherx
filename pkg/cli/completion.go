@@ -32,6 +32,25 @@ func ProjectArgValidator(client *rest.RESTClient) func(*cobra.Command, []string,
 	}
 }
 
+func ProjectFlagValidator(client *rest.RESTClient) func(*cobra.Command, []string, string) ([]string, cobra.ShellCompDirective) {
+	return func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		projects := &apiv3.ProjectList{}
+
+		err := manager.List(cmd.Context(), client, "projects", "", projects)
+		if err != nil {
+			return emptyCompletions, cobra.ShellCompDirectiveNoFileComp
+		}
+
+		var list []string
+
+		for _, project := range projects.Items {
+			list = append(list, project.Spec.DisplayName)
+		}
+
+		return list, cobra.ShellCompDirectiveNoFileComp
+	}
+}
+
 func ClustersFlagValidator(client *rest.RESTClient) func(*cobra.Command, []string, string) ([]string, cobra.ShellCompDirective) {
 	return func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		clusters := &apiv3.ClusterList{}

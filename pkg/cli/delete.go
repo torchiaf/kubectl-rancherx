@@ -14,7 +14,7 @@ func newDeleteCmd(client *Client) *cobra.Command {
 		Use:           "delete",
 		Short:         "Delete Rancher resources by resources and names.",
 		Args:          cobra.ExactArgs(1),
-		RunE:          ValidateSubCommand(rancher.Resources),
+		RunE:          ValidateSubCommand(rancher.ProjectResources),
 		SilenceErrors: true,
 	}
 

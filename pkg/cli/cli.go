@@ -58,7 +58,6 @@ A very simple cli.`,
 
 	rootCmd.AddCommand(
 		newVersionCmd(kubeClient),
-		newPodsCmd(kubeClient),
 		newGetCmd(client),
 		newCreateCmd(client),
 		newDeleteCmd(client),
